@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: user-api-service
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  profiles:
+    active: dev
+    include: mail
+
+server:
+  port: 0
+  servlet:
+    encoding:
+      charset: UTF-8
+      force-request: true
+      force: true
+      force-response: true
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+jwt:
+  secret: c3ByaW5nLXNlY3VyaXR5LWp3dC1waGMtd29ybGQtc2VjcmV0LWtleQ==
