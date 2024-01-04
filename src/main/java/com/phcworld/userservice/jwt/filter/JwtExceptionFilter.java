@@ -3,7 +3,7 @@ package com.phcworld.userservice.jwt.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.phcworld.userservice.exception.model.CustomBaseException;
 import com.phcworld.userservice.exception.model.ErrorCode;
-import com.phcworld.userservice.jwt.TokenProvider;
+import io.jsonwebtoken.security.WeakKeyException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,6 @@ import java.io.IOException;
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper;
-    private final TokenProvider tokenProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -34,6 +33,11 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             String errorMessage = objectMapper.writeValueAsString(e.getErrorCode().getMessage());
             response.getWriter().write(errorMessage);
+        } catch (WeakKeyException e){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setCharacterEncoding("utf-8");
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getWriter().write("잘못된 토큰입니다.");
         }
     }
 }
