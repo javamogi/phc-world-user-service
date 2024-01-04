@@ -8,6 +8,7 @@ import com.phcworld.userservice.jwt.handler.JwtAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,6 +28,7 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtExceptionFilter jwtExceptionFilter;
+    private final Environment env;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -64,11 +66,12 @@ public class SecurityConfig {
                 .csrf((csrfConfig) -> csrfConfig.disable())
                 .authorizeRequests((authorizeRequestsConfig) ->
                         authorizeRequestsConfig
-//                                .requestMatchers("/",
-//                                        "/users",
-//                                        "/users/login").permitAll()
-                                .requestMatchers("/**")
-                                .hasIpAddress("ip")
+                                .requestMatchers("/",
+                                        "/users",
+                                        "/users/login",
+                                        "/actuator/**").permitAll()
+//                                .requestMatchers("/**")
+//                                .hasIpAddress(env.getProperty("gateway.ip"))
                                 .anyRequest().authenticated()
                 )
                 // enable h2-console
