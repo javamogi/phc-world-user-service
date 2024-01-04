@@ -6,8 +6,11 @@ import com.phcworld.userservice.jwt.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer ";
@@ -31,14 +35,11 @@ public class TokenProvider {
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 3;  // 3일
 //    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 10;  // 10초
 
-    private final Key key;
-
-    public TokenProvider(@Value("${jwt.secret}") String secretKey) {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
-    }
+    private final Environment env;
 
     public boolean validateToken(String token) {
+        byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("jwt.secret"));
+        Key key = Keys.hmacShaKeyFor(keyBytes);
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
@@ -62,13 +63,6 @@ public class TokenProvider {
     }
 
     public TokenDto generateTokenDto(Authentication authentication) {
-//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//        String id = userDetails.getUsername();
-//        String authorities = authentication.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .collect(Collectors.joining(","));
-//        String userKey = id + authorities;
-
         long now = (new Date()).getTime();
 
         // Access Token 생성
@@ -76,10 +70,6 @@ public class TokenProvider {
 
         // Refresh Token 생성
         String refreshToken = generateRefreshToken(authentication, now);
-
-//        ValueOperations<String, String> ops = redisTemplate.opsForValue();
-//        Duration expireDuration = Duration.ofMillis(REFRESH_TOKEN_EXPIRE_TIME);
-//        ops.set(userKey, refreshToken, expireDuration.getSeconds());
 
         return TokenDto.builder()
                 .grantType(BEARER_TYPE)
@@ -91,7 +81,6 @@ public class TokenProvider {
     public Authentication getAuthentication(String accessToken) {
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
-//        String type = (String) claims.get("type");
 
         if (claims.get(AUTHORITIES_KEY) == null) {
             throw new UnauthorizedException();
@@ -112,6 +101,8 @@ public class TokenProvider {
     }
 
     private Claims parseClaims(String accessToken) {
+        byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("jwt.secret"));
+        Key key = Keys.hmacShaKeyFor(keyBytes);
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {
@@ -120,6 +111,9 @@ public class TokenProvider {
     }
 
     public String generateAccessToken(Authentication authentication, long now){
+        byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("jwt.secret"));
+        Key key = Keys.hmacShaKeyFor(keyBytes);
+
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String id = userDetails.getUsername();
         String authorities = authentication.getAuthorities().stream()
@@ -136,6 +130,9 @@ public class TokenProvider {
     }
 
     public String generateRefreshToken(Authentication authentication, long now){
+        byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("jwt.secret"));
+        Key key = Keys.hmacShaKeyFor(keyBytes);
+
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String id = userDetails.getUsername();
         String authorities = authentication.getAuthorities().stream()
