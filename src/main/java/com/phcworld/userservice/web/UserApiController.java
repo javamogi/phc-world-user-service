@@ -35,7 +35,7 @@ public class UserApiController {
 
     @PostMapping("/login")
     public TokenDto login(@Valid @RequestBody LoginUserRequestDto user) {
-        return userService.tokenLogin(user);
+        return userService.login(user);
     }
 
     @GetMapping("/userInfo")
@@ -43,9 +43,9 @@ public class UserApiController {
         return userService.getLoginUserInfo();
     }
 
-    @GetMapping("/{id}")
-    public UserResponseDto getUserInfo(@PathVariable(name = "id") Long id){
-        return userService.getUserInfo(id);
+    @GetMapping("/{userId}")
+    public UserResponseDto getUserInfo(@PathVariable(name = "userId") String userId){
+        return userService.getUserInfo(userId);
     }
 
     @PatchMapping("")
@@ -53,9 +53,9 @@ public class UserApiController {
         return userService.modifyUserInfo(requestDto);
     }
 
-    @DeleteMapping("/{id}")
-    public SuccessResponseDto deleteUser(@PathVariable(name = "id") Long id){
-        return userService.deleteUser(id);
+    @DeleteMapping("/{userId}")
+    public SuccessResponseDto deleteUser(@PathVariable(name = "userId") String userId){
+        return userService.deleteUser(userId);
     }
 
     @GetMapping("/logout")

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -47,6 +48,7 @@ class UserServiceTest {
                 .name(requestDto.name())
                 .profileImage("blank-profile-picture.png")
                 .authority(Authority.ROLE_USER)
+                .userId(UUID.randomUUID().toString())
                 .createDate(LocalDateTime.now())
                 .build();
 
@@ -74,9 +76,9 @@ class UserServiceTest {
                 .email("test@test.test")
                 .password("test")
                 .build();
-        when(userService.tokenLogin(requestDto)).thenThrow(NotFoundException.class);
+        when(userService.login(requestDto)).thenThrow(NotFoundException.class);
         Assertions.assertThrows(NotFoundException.class, () -> {
-            userService.tokenLogin(requestDto);
+            userService.login(requestDto);
         });
     }
 
@@ -86,9 +88,9 @@ class UserServiceTest {
                 .email("test@test.test")
                 .password("test1")
                 .build();
-        when(userService.tokenLogin(requestDto)).thenThrow(BadCredentialsException.class);
+        when(userService.login(requestDto)).thenThrow(BadCredentialsException.class);
         Assertions.assertThrows(BadCredentialsException.class, () -> {
-            userService.tokenLogin(requestDto);
+            userService.login(requestDto);
         });
     }
 
@@ -98,9 +100,9 @@ class UserServiceTest {
                 .email("test@test.test")
                 .password("test1")
                 .build();
-        when(userService.tokenLogin(requestDto)).thenThrow(DeletedEntityException.class);
+        when(userService.login(requestDto)).thenThrow(DeletedEntityException.class);
         Assertions.assertThrows(DeletedEntityException.class, () -> {
-            userService.tokenLogin(requestDto);
+            userService.login(requestDto);
         });
     }
 
@@ -115,8 +117,8 @@ class UserServiceTest {
                 .accessToken("accessToken")
                 .refreshToken("refreshToken")
                 .build();
-        when(userService.tokenLogin(requestDto)).thenReturn(tokenDto);
-        TokenDto resultToken = userService.tokenLogin(requestDto);
+        when(userService.login(requestDto)).thenReturn(tokenDto);
+        TokenDto resultToken = userService.login(requestDto);
         assertThat(resultToken).isEqualTo(tokenDto);
     }
 
@@ -141,16 +143,18 @@ class UserServiceTest {
                 .name("테스트")
                 .createDate("방금전")
                 .build();
-        when(userService.getUserInfo(1L)).thenReturn(userResponseDto);
-        UserResponseDto result = userService.getUserInfo(1L);
+        String userId = UUID.randomUUID().toString();
+        when(userService.getUserInfo(userId)).thenReturn(userResponseDto);
+        UserResponseDto result = userService.getUserInfo(userId);
         assertThat(result).isEqualTo(userResponseDto);
     }
 
     @Test
     void 회원_정보_요청_없는_회원(){
-        when(userService.getUserInfo(3L)).thenThrow(NotFoundException.class);
+        String userId = UUID.randomUUID().toString();
+        when(userService.getUserInfo(userId)).thenThrow(NotFoundException.class);
         Assertions.assertThrows(NotFoundException.class, () -> {
-            userService.getUserInfo(3L);
+            userService.getUserInfo(userId);
         });
     }
 
@@ -160,8 +164,9 @@ class UserServiceTest {
         byte[] bytesFile = Files.readAllBytes(file.toPath());
         String imgData = Base64.getEncoder().encodeToString(bytesFile);
 
+        String userId = UUID.randomUUID().toString();
         UserRequestDto requestDto = UserRequestDto.builder()
-                .id(1L)
+                .userId(userId)
                 .email("test@test.test")
                 .name("test")
                 .password("test")
@@ -175,6 +180,7 @@ class UserServiceTest {
                 .name("test")
                 .createDate("방금전")
                 .profileImage("imgUrl")
+                .userId(userId)
                 .build();
         when(userService.modifyUserInfo(requestDto)).thenReturn(userResponseDto);
         UserResponseDto result = userService.modifyUserInfo(requestDto);
@@ -183,8 +189,9 @@ class UserServiceTest {
 
     @Test
     void 회원_정보_변경_실패_로그인_회원_요청_회원_다름(){
+        String userId = UUID.randomUUID().toString();
         UserRequestDto requestDto = UserRequestDto.builder()
-                .id(1L)
+                .userId(userId)
                 .email("test@test.test")
                 .name("test")
                 .password("test")
@@ -198,8 +205,9 @@ class UserServiceTest {
 
     @Test
     void 회원_정보_변경_실패_없는_회원(){
+        String userId = UUID.randomUUID().toString();
         UserRequestDto requestDto = UserRequestDto.builder()
-                .id(1L)
+                .userId(userId)
                 .email("test@test.test")
                 .name("test")
                 .password("test")
@@ -213,33 +221,34 @@ class UserServiceTest {
 
     @Test
     void 회원_정보_삭제_성공(){
+        String userId = UUID.randomUUID().toString();
         SuccessResponseDto successResponseDto = SuccessResponseDto.builder()
                 .statusCode(200)
                 .message("삭제 성공")
                 .build();
 
-        when(userService.deleteUser(1L)).thenReturn(successResponseDto);
-        SuccessResponseDto result = userService.deleteUser(1L);
+        when(userService.deleteUser(userId)).thenReturn(successResponseDto);
+        SuccessResponseDto result = userService.deleteUser(userId);
         assertThat(result).isEqualTo(successResponseDto);
     }
 
     @Test
     void 회원_정보_삭제_실패_로그인_회원_요청_회원_다름(){
-        Long id = 1L;
-        when(userService.deleteUser(id)).thenThrow(UnauthorizedException.class);
+        String userId = UUID.randomUUID().toString();
+        when(userService.deleteUser(userId)).thenThrow(UnauthorizedException.class);
 
         Assertions.assertThrows(UnauthorizedException.class, () -> {
-            userService.deleteUser(id);
+            userService.deleteUser(userId);
         });
     }
 
     @Test
     void 회원_정보_삭제_실패_회원_없음(){
-        Long id = 1L;
-        when(userService.deleteUser(id)).thenThrow(NotFoundException.class);
+        String userId = UUID.randomUUID().toString();
+        when(userService.deleteUser(userId)).thenThrow(NotFoundException.class);
 
         Assertions.assertThrows(NotFoundException.class, () -> {
-            userService.deleteUser(id);
+            userService.deleteUser(userId);
         });
     }
 

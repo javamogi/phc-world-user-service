@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SecurityUtil {
 
-    public static Long getCurrentMemberId() {
+    public static String getCurrentMemberId() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || authentication.getName() == null) {
             throw new RuntimeException("Security Context 에 인증 정보가 없습니다.");
         }
-        return Long.valueOf(authentication.getName());
+        return authentication.getName();
     }
 
 //    public static String getAuthorities() {

@@ -21,10 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -116,6 +113,11 @@ class TokenProviderTest {
         String password = passwordEncoder.encode("test");
         log.info("password : {}", password);
         assertThat(passwordEncoder.matches("test", password)).isTrue();
+    }
+
+    @Test
+    void test(){
+        log.info("test : {}", UUID.randomUUID().toString());
     }
 
 }

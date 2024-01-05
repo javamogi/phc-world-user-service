@@ -21,10 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -49,33 +46,49 @@ class UserApiControllerTest {
 
     @Test
     void 회원가입_성공() throws Exception {
+        UserRequestDto requestDto = UserRequestDto.builder()
+                .email("abcdefg@test.test")
+                .password("abcde")
+                .name("에이비씨디이")
+                .build();
+        String request = objectMapper.writeValueAsString(requestDto);
         this.mvc.perform(post("/users")
                         .with(csrf())
-                        .param("email", "abcdefg@test.test")
-                        .param("password", "abcde")
-                        .param("name", "에이비씨디이"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                )
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
     void 회원가입_실패_중복_이메일() throws Exception {
+        UserRequestDto requestDto = UserRequestDto.builder()
+                .email("test@test.test")
+                .password("abcde")
+                .name("에이비씨디이")
+                .build();
+        String request = objectMapper.writeValueAsString(requestDto);
         this.mvc.perform(post("/users")
                         .with(csrf())
-                        .param("email", "test@test.test")
-                        .param("password", "abcde")
-                        .param("name", "에이비씨디이"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
                 .andDo(print())
                 .andExpect(status().isConflict());
     }
 
     @Test
     void 회원가입_실패_모든_요소_빈값() throws Exception {
+        UserRequestDto requestDto = UserRequestDto.builder()
+                .email("")
+                .password("")
+                .name("")
+                .build();
+        String request = objectMapper.writeValueAsString(requestDto);
         this.mvc.perform(post("/users")
                         .with(csrf())
-                        .param("email", "")
-                        .param("password", "")
-                        .param("name", ""))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
                 .andDo(print())
                 .andExpect(jsonPath("$.messages.length()").value(6))
                 .andExpect(status().isBadRequest());
@@ -83,11 +96,16 @@ class UserApiControllerTest {
 
     @Test
     void 회원가입_실패_이메일_입력_없음() throws Exception {
+        UserRequestDto requestDto = UserRequestDto.builder()
+                .email("")
+                .password("password")
+                .name("name")
+                .build();
+        String request = objectMapper.writeValueAsString(requestDto);
         this.mvc.perform(post("/users")
                         .with(csrf())
-                        .param("email", "")
-                        .param("password", "password")
-                        .param("name", "name"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
                 .andDo(print())
                 .andExpect(jsonPath("$.messages.length()").value(1))
                 .andExpect(status().isBadRequest());
@@ -95,11 +113,16 @@ class UserApiControllerTest {
 
     @Test
     void 회원가입_실패_이메일_형식_아님() throws Exception {
+        UserRequestDto requestDto = UserRequestDto.builder()
+                .email("test")
+                .password("password")
+                .name("name")
+                .build();
+        String request = objectMapper.writeValueAsString(requestDto);
         this.mvc.perform(post("/users")
                         .with(csrf())
-                        .param("email", "test")
-                        .param("password", "password")
-                        .param("name", "name"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
                 .andDo(print())
                 .andExpect(jsonPath("$.messages.[0]").value("이메일 형식이 아닙니다."))
                 .andExpect(status().isBadRequest());
@@ -107,11 +130,16 @@ class UserApiControllerTest {
 
     @Test
     void 회원가입_실패_비밀번호_입력_없음() throws Exception {
+        UserRequestDto requestDto = UserRequestDto.builder()
+                .email("testttt@test.test")
+                .password("")
+                .name("name")
+                .build();
+        String request = objectMapper.writeValueAsString(requestDto);
         this.mvc.perform(post("/users")
                         .with(csrf())
-                        .param("email", "testttt@test.test")
-                        .param("password", "")
-                        .param("name", "name"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
                 .andDo(print())
                 .andExpect(jsonPath("$.messages.length()").value(2))
                 .andExpect(status().isBadRequest());
@@ -119,11 +147,16 @@ class UserApiControllerTest {
 
     @Test
     void 회원가입_실패_비밀번호_입력_최소입력_미만() throws Exception {
+        UserRequestDto requestDto = UserRequestDto.builder()
+                .email("testttt@test.test")
+                .password("tes")
+                .name("name")
+                .build();
+        String request = objectMapper.writeValueAsString(requestDto);
         this.mvc.perform(post("/users")
                         .with(csrf())
-                        .param("email", "testttt@test.test")
-                        .param("password", "tes")
-                        .param("name", "name"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
                 .andDo(print())
                 .andExpect(jsonPath("$.messages.[0]").value("비밀번호는 4자 이상으로 해야합니다."))
                 .andExpect(status().isBadRequest());
@@ -131,11 +164,16 @@ class UserApiControllerTest {
 
     @Test
     void 회원가입_실패_이름_입력_없음() throws Exception {
+        UserRequestDto requestDto = UserRequestDto.builder()
+                .email("testttt@test.test")
+                .password("test")
+                .name("")
+                .build();
+        String request = objectMapper.writeValueAsString(requestDto);
         this.mvc.perform(post("/users")
                         .with(csrf())
-                        .param("email", "testttt@test.test")
-                        .param("password", "password")
-                        .param("name", ""))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
                 .andDo(print())
                 .andExpect(jsonPath("$.messages.length()").value(3))
                 .andExpect(status().isBadRequest());
@@ -143,11 +181,16 @@ class UserApiControllerTest {
 
     @Test
     void 회원가입_실패_이름_특수문자_입력() throws Exception {
+        UserRequestDto requestDto = UserRequestDto.builder()
+                .email("testttt@test.test")
+                .password("test")
+                .name("!@#$$")
+                .build();
+        String request = objectMapper.writeValueAsString(requestDto);
         this.mvc.perform(post("/users")
                         .with(csrf())
-                        .param("email", "testttt@test.test")
-                        .param("password", "password")
-                        .param("name", "!@#$$"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
                 .andDo(print())
                 .andExpect(jsonPath("$.messages.[0]").value("이름은 한글, 영문, 숫자만 가능합니다."))
                 .andExpect(status().isBadRequest());
@@ -155,11 +198,16 @@ class UserApiControllerTest {
 
     @Test
     void 회원가입_실패_이름_최소입력_미만() throws Exception {
+        UserRequestDto requestDto = UserRequestDto.builder()
+                .email("testttt@test.test")
+                .password("test")
+                .name("ab")
+                .build();
+        String request = objectMapper.writeValueAsString(requestDto);
         this.mvc.perform(post("/users")
                         .with(csrf())
-                        .param("email", "testttt@test.test")
-                        .param("password", "password")
-                        .param("name", "ab"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
                 .andDo(print())
                 .andExpect(jsonPath("$.messages.[0]").value("이름은 영문 3자 이상 20자 이하 또는 한글 두자이상 6자 이하로 해야합니다."))
                 .andExpect(status().isBadRequest());
@@ -167,11 +215,16 @@ class UserApiControllerTest {
 
     @Test
     void 회원가입_실패_이름_최대입력_초과() throws Exception {
+        UserRequestDto requestDto = UserRequestDto.builder()
+                .email("testttt@test.test")
+                .password("tes")
+                .name("aaaaabbbbbcccccddddde")
+                .build();
+        String request = objectMapper.writeValueAsString(requestDto);
         this.mvc.perform(post("/users")
                         .with(csrf())
-                        .param("email", "testttt@test.test")
-                        .param("password", "password")
-                        .param("name", "aaaaabbbbbcccccddddde"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
                 .andDo(print())
                 .andExpect(jsonPath("$.messages.[0]").value("이름은 영문 3자 이상 20자 이하 또는 한글 두자이상 6자 이하로 해야합니다."))
                 .andExpect(status().isBadRequest());
@@ -246,7 +299,7 @@ class UserApiControllerTest {
                 Arrays.stream(new String[]{Authority.ROLE_ADMIN.toString()})
                         .map(SimpleGrantedAuthority::new)
                         .toList();
-        UserDetails principal = new org.springframework.security.core.userdetails.User("1", "", authorities);
+        UserDetails principal = new org.springframework.security.core.userdetails.User("a2240b59-47f6-4ad4-ba07-f7c495909f40", "", authorities);
         Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", authorities);
         long now = (new Date()).getTime();
         String accessToken = tokenProvider.generateAccessToken(authentication, now);
@@ -267,12 +320,12 @@ class UserApiControllerTest {
                 Arrays.stream(new String[]{Authority.ROLE_ADMIN.toString()})
                         .map(SimpleGrantedAuthority::new)
                         .toList();
-        UserDetails principal = new org.springframework.security.core.userdetails.User("1", "", authorities);
+        UserDetails principal = new org.springframework.security.core.userdetails.User("a2240b59-47f6-4ad4-ba07-f7c495909f40", "", authorities);
         Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", authorities);
         long now = (new Date()).getTime();
         String accessToken = tokenProvider.generateAccessToken(authentication, now);
 
-        this.mvc.perform(get("/users/{id}", 2L)
+        this.mvc.perform(get("/users/{userId}", "3465335b-5457-4219-a0b2-d0c8b79d16ac")
                         .with(csrf())
                         .header("Authorization", "Bearer " + accessToken))
                 .andDo(print())
@@ -283,12 +336,12 @@ class UserApiControllerTest {
     }
 
     @Test
-    void 회원_정보_변경() throws Exception {
+    void 회원_정보_변경_성공() throws Exception {
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(new String[]{Authority.ROLE_ADMIN.toString()})
                         .map(SimpleGrantedAuthority::new)
                         .toList();
-        UserDetails principal = new org.springframework.security.core.userdetails.User("1", "", authorities);
+        UserDetails principal = new org.springframework.security.core.userdetails.User("a2240b59-47f6-4ad4-ba07-f7c495909f40", "", authorities);
         Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", authorities);
         long now = (new Date()).getTime();
         String accessToken = tokenProvider.generateAccessToken(authentication, now);
@@ -298,7 +351,7 @@ class UserApiControllerTest {
         String imgData = Base64.getEncoder().encodeToString(bytesFile);
 
         UserRequestDto userRequestDto = UserRequestDto.builder()
-                .id(1L)
+                .userId("a2240b59-47f6-4ad4-ba07-f7c495909f40")
                 .email("test@test.test")
                 .password("test")
                 .name("테스트")
@@ -332,8 +385,9 @@ class UserApiControllerTest {
         long now = (new Date()).getTime();
         String accessToken = tokenProvider.generateAccessToken(authentication, now);
 
+        String userId = UUID.randomUUID().toString();
         UserRequestDto requestDto = UserRequestDto.builder()
-                .id(2L)
+                .userId(userId)
                 .email("test2@test.test")
                 .password("test2")
                 .name("test2")
@@ -355,12 +409,12 @@ class UserApiControllerTest {
                 Arrays.stream(new String[]{Authority.ROLE_ADMIN.toString()})
                         .map(SimpleGrantedAuthority::new)
                         .toList();
-        UserDetails principal = new org.springframework.security.core.userdetails.User("1", "", authorities);
+        UserDetails principal = new org.springframework.security.core.userdetails.User("a2240b59-47f6-4ad4-ba07-f7c495909f40", "", authorities);
         Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", authorities);
         long now = (new Date()).getTime();
         String accessToken = tokenProvider.generateAccessToken(authentication, now);
 
-        this.mvc.perform(delete("/users/{id}", 1L)
+        this.mvc.perform(delete("/users/{userId}", "a2240b59-47f6-4ad4-ba07-f7c495909f40")
                         .with(csrf())
                         .header("Authorization", "Bearer " + accessToken))
                 .andDo(print())
@@ -375,12 +429,12 @@ class UserApiControllerTest {
                 Arrays.stream(new String[]{Authority.ROLE_ADMIN.toString()})
                         .map(SimpleGrantedAuthority::new)
                         .toList();
-        UserDetails principal = new org.springframework.security.core.userdetails.User("1", "", authorities);
+        UserDetails principal = new org.springframework.security.core.userdetails.User("a2240b59-47f6-4ad4-ba07-f7c495909f40", "", authorities);
         Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", authorities);
         long now = (new Date()).getTime();
         String accessToken = tokenProvider.generateAccessToken(authentication, now);
 
-        this.mvc.perform(delete("/users/{id}", 2L)
+        this.mvc.perform(delete("/users/{userId}", "3465335b-5457-4219-a0b2-d0c8b79d16ac")
                         .with(csrf())
                         .header("Authorization", "Bearer " + accessToken))
                 .andDo(print())

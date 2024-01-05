@@ -115,14 +115,14 @@ public class TokenProvider {
         Key key = Keys.hmacShaKeyFor(keyBytes);
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String id = userDetails.getUsername();
+        String userId = userDetails.getUsername();
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         return Jwts.builder()
-                .setSubject(id)
+                .setSubject(userId)
                 .claim(AUTHORITIES_KEY, authorities)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -134,14 +134,14 @@ public class TokenProvider {
         Key key = Keys.hmacShaKeyFor(keyBytes);
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String id = userDetails.getUsername();
+        String userId = userDetails.getUsername();
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         // Refresh Token 생성
         return Jwts.builder()
-                .setSubject(id)
+                .setSubject(userId)
                 .claim(AUTHORITIES_KEY, authorities)
                 .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)

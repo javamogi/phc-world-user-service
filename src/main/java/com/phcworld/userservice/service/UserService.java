@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -50,12 +51,13 @@ public class UserService {
 				.authority(Authority.ROLE_USER)
 				.createDate(LocalDateTime.now())
 				.profileImage("blank-profile-picture.png")
+				.userId(UUID.randomUUID().toString())
 				.build();
 
 		return userRepository.save(user);
 	}
 
-	public TokenDto tokenLogin(LoginUserRequestDto requestUser) {
+	public TokenDto login(LoginUserRequestDto requestUser) {
 		// 비밀번호 확인 + spring security 객체 생성 후 JWT 토큰 생성
 		Authentication authentication = SecurityUtil.getAuthentication(requestUser, userDetailsService, passwordEncoder);
 
@@ -64,24 +66,24 @@ public class UserService {
 	}
 
 	public UserResponseDto getLoginUserInfo(){
-		Long userId = SecurityUtil.getCurrentMemberId();
-		User user = userRepository.findById(userId)
+		String userId = SecurityUtil.getCurrentMemberId();
+		User user = userRepository.findByUserId(userId)
 				.orElseThrow(NotFoundException::new);
 		return UserResponseDto.of(user);
 	}
 
-	public UserResponseDto getUserInfo(Long userId){
-		User user = userRepository.findById(userId)
+	public UserResponseDto getUserInfo(String userId){
+		User user = userRepository.findByUserId(userId)
 				.orElseThrow(NotFoundException::new);
 		return UserResponseDto.of(user);
 	}
 
 	public UserResponseDto modifyUserInfo(UserRequestDto requestDto){
-        Long userId = SecurityUtil.getCurrentMemberId();
-		if(!userId.equals(requestDto.id())){
+		String userId = SecurityUtil.getCurrentMemberId();
+		if(!userId.equals(requestDto.userId())){
 			throw new UnauthorizedException();
 		}
-		User user = userRepository.findById(requestDto.id())
+		User user = userRepository.findByUserId(requestDto.userId())
 				.orElseThrow(NotFoundException::new);
 		String profileImg = user.getProfileImage();
 		if(requestDto.imageName() != null){
@@ -95,14 +97,14 @@ public class UserService {
 		return UserResponseDto.of(user);
 	}
 
-	public SuccessResponseDto deleteUser(Long id) {
-		Long userId = SecurityUtil.getCurrentMemberId();
+	public SuccessResponseDto deleteUser(String userId) {
+		String securityUserId = SecurityUtil.getCurrentMemberId();
 		Authority authorities = SecurityUtil.getAuthorities();
 
-		if(!userId.equals(id) && authorities != Authority.ROLE_ADMIN){
+		if(!securityUserId.equals(userId) && authorities != Authority.ROLE_ADMIN){
 			throw new UnauthorizedException();
 		}
-		User user = userRepository.findById(id)
+		User user = userRepository.findByUserId(userId)
 				.orElseThrow(NotFoundException::new);
 		user.delete();
 
