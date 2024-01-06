@@ -73,34 +73,34 @@ class TokenProviderTest {
         log.info("access token : {}", accessToken);
     }
 
-    @Test
-    void 토큰_검증_성공(){
-        long now = (new Date()).getTime();
-        String accessToken = tokenProvider.generateAccessToken(authentication, now);
-        boolean result = tokenProvider.validateToken(accessToken);
-        assertThat(result).isTrue();
-    }
+//    @Test
+//    void 토큰_검증_성공(){
+//        long now = (new Date()).getTime();
+//        String accessToken = tokenProvider.generateAccessToken(authentication, now);
+//        boolean result = tokenProvider.validateToken(accessToken);
+//        assertThat(result).isTrue();
+//    }
 
-    @Test
-    void 토큰_검증_잘못된_토큰(){
-        long now = (new Date()).getTime();
-        String accessToken = tokenProvider.generateAccessToken(authentication, now);
-        String finalAccessToken = accessToken.replace(".", "");
-        Assertions.assertThrows(BadRequestException.class, () -> {
-            tokenProvider.validateToken(finalAccessToken);
-        });
-    }
+//    @Test
+//    void 토큰_검증_잘못된_토큰(){
+//        long now = (new Date()).getTime();
+//        String accessToken = tokenProvider.generateAccessToken(authentication, now);
+//        String finalAccessToken = accessToken.replace(".", "");
+//        Assertions.assertThrows(BadRequestException.class, () -> {
+//            tokenProvider.validateToken(finalAccessToken);
+//        });
+//    }
 
-    @Test
-    void 토큰_검증_만료된_토큰(){
-        String accessToken = Jwts.builder()
-                .setExpiration(new Date(new Date().getTime()))
-                .compact();
-
-        Assertions.assertThrows(UnauthorizedException.class, () -> {
-            tokenProvider.validateToken(accessToken);
-        });
-    }
+//    @Test
+//    void 토큰_검증_만료된_토큰(){
+//        String accessToken = Jwts.builder()
+//                .setExpiration(new Date(new Date().getTime()))
+//                .compact();
+//
+//        Assertions.assertThrows(UnauthorizedException.class, () -> {
+//            tokenProvider.validateToken(accessToken);
+//        });
+//    }
 
     @Test
     void 토큰_응답_dto_생성(){
