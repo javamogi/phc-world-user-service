@@ -1,16 +1,11 @@
 spring:
   application:
     name: user-api-service
-  servlet:
-    multipart:
-      max-file-size: 5MB
-      max-request-size: 5MB
-  mvc:
-    hiddenmethod:
-      filter:
-        enabled: true
-    pathmatch:
-      matching-strategy: ant_path_matcher
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
 
   profiles:
     active: dev
@@ -38,6 +33,6 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans
+        include: refresh, health, beans, busrefresh
 #jwt:
 #  secret: c3ByaW5nLXNlY3VyaXR5LWp3dC1waGMtd29ybGQtc2VjcmV0LWtleQ==
