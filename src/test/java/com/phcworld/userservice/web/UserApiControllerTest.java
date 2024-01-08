@@ -18,6 +18,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -477,4 +479,29 @@ class UserApiControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void 요청_회원_목록_가져오기() throws Exception {
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(new String[]{Authority.ROLE_ADMIN.toString()})
+                        .map(SimpleGrantedAuthority::new)
+                        .toList();
+        UserDetails principal = new org.springframework.security.core.userdetails.User("a2240b59-47f6-4ad4-ba07-f7c495909f40", "", authorities);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        long now = (new Date()).getTime();
+        String accessToken = tokenProvider.generateAccessToken(authentication, now);
+
+        List<String> ids = new ArrayList<>();
+        ids.add("a2240b59-47f6-4ad4-ba07-f7c495909f40");
+        ids.add("3465335b-5457-4219-a0b2-d0c8b79d16ac");
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.addAll("userIds", ids);
+
+        this.mvc.perform(get("/users")
+                        .params(params)
+                        .with(csrf())
+                        .header("Authorization", "Bearer " + accessToken))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }

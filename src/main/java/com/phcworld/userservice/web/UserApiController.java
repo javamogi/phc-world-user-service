@@ -6,11 +6,15 @@ import com.phcworld.userservice.dto.UserRequestDto;
 import com.phcworld.userservice.dto.UserResponseDto;
 import com.phcworld.userservice.jwt.dto.TokenDto;
 import com.phcworld.userservice.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -66,5 +70,10 @@ public class UserApiController {
     @GetMapping("/newToken")
     public TokenDto getToken(){
         return userService.getNewToken();
+    }
+
+    @GetMapping("")
+    public Map<String, UserResponseDto> getUsers(@RequestParam(value = "userIds") List<String> userIds){
+        return userService.getUsersByUserIdList(userIds);
     }
 }

@@ -23,7 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -121,5 +125,14 @@ public class UserService {
 	public TokenDto getNewToken() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		return tokenProvider.generateTokenDto(authentication);
+	}
+
+	public Map<String, UserResponseDto> getUsersByUserIdList(List<String> userIds){
+		return userRepository.findByUserId(userIds)
+				.stream()
+				.collect(Collectors.toMap(
+						User::getUserId,
+					UserResponseDto::of)
+				);
 	}
 }

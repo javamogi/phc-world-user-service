@@ -22,10 +22,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -250,6 +250,42 @@ class UserServiceTest {
         Assertions.assertThrows(NotFoundException.class, () -> {
             userService.deleteUser(userId);
         });
+    }
+
+    @Test
+    void 회원_아이디_리스트_회원_정보_불러오기(){
+        List<String> userIds = new ArrayList<>();
+        Map<String, UserResponseDto> list = userService.getUsersByUserIdList(userIds);
+
+        String userId = UUID.randomUUID().toString();
+        UserResponseDto userResponseDto1 = UserResponseDto.builder()
+                .id(1L)
+                .email("test@test.test")
+                .name("테스트")
+                .createDate("방금전")
+                .userId(userId)
+                .build();
+        userIds.add(userId);
+
+        String userId2 = UUID.randomUUID().toString();
+        UserResponseDto userResponseDto2 = UserResponseDto.builder()
+                .id(2L)
+                .email("test2@test.test")
+                .name("테스트2")
+                .createDate("방금전")
+                .userId(userId2)
+                .build();
+        userIds.add(userId2);
+
+        list.put(userId, userResponseDto1);
+        list.put(userId2, userResponseDto2);
+
+        when(userService.getUsersByUserIdList(userIds)).thenReturn(list);
+        Map<String, UserResponseDto> result = userService.getUsersByUserIdList(userIds);
+        assertThat(result)
+                .hasSize(2)
+                .contains(entry(userId, userResponseDto1))
+                .contains(entry(userId2, userResponseDto2));
     }
 
 }
