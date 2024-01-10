@@ -5,7 +5,6 @@ import lombok.Builder;
 
 @Builder
 public record UserResponseDto(
-        Long id,
         String email,
         String name,
         String createDate,
@@ -14,7 +13,6 @@ public record UserResponseDto(
 ) {
     public static UserResponseDto of(User user){
         return UserResponseDto.builder()
-                .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
                 .createDate(user.getFormattedCreateDate())

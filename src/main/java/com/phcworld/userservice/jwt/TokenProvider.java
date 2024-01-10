@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -36,31 +37,6 @@ public class TokenProvider {
 //    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 10;  // 10초
 
     private final Environment env;
-
-//    public boolean validateToken(String token) {
-//        byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("jwt.secret"));
-//        Key key = Keys.hmacShaKeyFor(keyBytes);
-//        try {
-//            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-//            return true;
-//        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-//            // 잘못된 JWT 서명
-//            log.debug("잘못된 JWT 서명입니다.");
-//            throw new BadRequestException();
-//        } catch (ExpiredJwtException e) {
-//            // 만료된 JWT 토큰
-//            log.debug("만료된 JWT 토큰입니다.");
-//            throw new UnauthorizedException();
-//        } catch (UnsupportedJwtException e) {
-//            // 지원되지 않는 JWT 토큰
-//            log.debug("지원되지 않는 JWT 토큰입니다.");
-//            throw new BadRequestException();
-//        } catch (IllegalArgumentException e) {
-//            // 잘못된 토큰
-//            log.debug("JWT 잘못된 토큰입니다.");
-//            throw new BadRequestException();
-//        }
-//    }
 
     public TokenDto generateTokenDto(Authentication authentication) {
         long now = (new Date()).getTime();
@@ -101,7 +77,9 @@ public class TokenProvider {
     }
 
     private Claims parseClaims(String accessToken) {
-        byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("jwt.secret"));
+        String secret = env.getProperty("jwt.secret");
+        String keyBase64Encoded = Base64.getEncoder().encodeToString(secret.getBytes());
+        byte[] keyBytes = Decoders.BASE64.decode(keyBase64Encoded);
         Key key = Keys.hmacShaKeyFor(keyBytes);
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
@@ -111,7 +89,9 @@ public class TokenProvider {
     }
 
     public String generateAccessToken(Authentication authentication, long now){
-        byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("jwt.secret"));
+        String secret = env.getProperty("jwt.secret");
+        String keyBase64Encoded = Base64.getEncoder().encodeToString(secret.getBytes());
+        byte[] keyBytes = Decoders.BASE64.decode(keyBase64Encoded);
         Key key = Keys.hmacShaKeyFor(keyBytes);
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -130,7 +110,9 @@ public class TokenProvider {
     }
 
     public String generateRefreshToken(Authentication authentication, long now){
-        byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("jwt.secret"));
+        String secret = env.getProperty("jwt.secret");
+        String keyBase64Encoded = Base64.getEncoder().encodeToString(secret.getBytes());
+        byte[] keyBytes = Decoders.BASE64.decode(keyBase64Encoded);
         Key key = Keys.hmacShaKeyFor(keyBytes);
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
