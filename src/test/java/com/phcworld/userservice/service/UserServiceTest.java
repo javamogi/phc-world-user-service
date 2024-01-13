@@ -125,7 +125,6 @@ class UserServiceTest {
     @Test
     void 로그인_회원_정보_가져오기(){
         UserResponseDto userResponseDto = UserResponseDto.builder()
-                .id(1L)
                 .email("test@test.test")
                 .name("테스트")
                 .createDate("방금전")
@@ -138,7 +137,6 @@ class UserServiceTest {
     @Test
     void 회원_정보_가져오기(){
         UserResponseDto userResponseDto = UserResponseDto.builder()
-                .id(1L)
                 .email("test@test.test")
                 .name("테스트")
                 .createDate("방금전")
@@ -175,7 +173,6 @@ class UserServiceTest {
                 .build();
 
         UserResponseDto userResponseDto = UserResponseDto.builder()
-                .id(1L)
                 .email("test@test.test")
                 .name("test")
                 .createDate("방금전")
@@ -259,7 +256,6 @@ class UserServiceTest {
 
         String userId = UUID.randomUUID().toString();
         UserResponseDto userResponseDto1 = UserResponseDto.builder()
-                .id(1L)
                 .email("test@test.test")
                 .name("테스트")
                 .createDate("방금전")
@@ -269,7 +265,6 @@ class UserServiceTest {
 
         String userId2 = UUID.randomUUID().toString();
         UserResponseDto userResponseDto2 = UserResponseDto.builder()
-                .id(2L)
                 .email("test2@test.test")
                 .name("테스트2")
                 .createDate("방금전")

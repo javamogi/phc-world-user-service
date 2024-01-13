@@ -5,6 +5,7 @@ import com.phcworld.userservice.utils.LocalDateTimeUtils;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serializable;
@@ -44,6 +45,7 @@ public class User implements Serializable {
 
 	private String profileImage;
 
+	@ColumnDefault("false")
 	private Boolean isDeleted;
 	
 	public String getFormattedCreateDate() {

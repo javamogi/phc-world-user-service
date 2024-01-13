@@ -12,6 +12,7 @@ import com.phcworld.userservice.exception.model.UnauthorizedException;
 import com.phcworld.userservice.jwt.TokenProvider;
 import com.phcworld.userservice.jwt.dto.TokenDto;
 import com.phcworld.userservice.jwt.service.CustomUserDetailsService;
+import com.phcworld.userservice.messagequeue.UserProducer;
 import com.phcworld.userservice.repository.UserRepository;
 import com.phcworld.userservice.security.utils.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,7 @@ public class UserService {
 	private final CustomUserDetailsService userDetailsService;
 	private final TokenProvider tokenProvider;
 //	private final UploadFileService uploadFileService;
+	private final UserProducer userProducer;
 
 	public User registerUser(UserRequestDto requestUser) {
 		boolean isFind = userRepository.findByEmail(requestUser.email())
@@ -58,7 +60,10 @@ public class UserService {
 				.userId(UUID.randomUUID().toString())
 				.build();
 
-		return userRepository.save(user);
+		userProducer.send("users", user);
+
+//		return userRepository.save(user);
+		return user;
 	}
 
 	public TokenDto login(LoginUserRequestDto requestUser) {
