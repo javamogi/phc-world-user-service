@@ -27,15 +27,15 @@ public class UserApiController {
     private final UserService userService;
     private final Environment env;
 
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "error")
-    })
     @GetMapping("/health_check")
     public String status(){
         return String.format("It's Working in User Service on PORT %s",
                 env.getProperty("local.server.port"));
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "409", description = "가입된 이메일")
+    })
     @PostMapping("")
     public UserResponseDto create(@Valid @RequestBody UserRequestDto user) {
         return UserResponseDto.of(userService.registerUser(user));
@@ -46,21 +46,35 @@ public class UserApiController {
         return userService.login(user);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "요청한 회원 정보 없음")
+    })
     @GetMapping("/userInfo")
     public UserResponseDto getUserInfo(){
         return userService.getLoginUserInfo();
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "요청한 회원 정보 없음")
+    })
     @GetMapping("/{userId}")
     public UserResponseDto getUserInfo(@PathVariable(name = "userId") String userId){
         return userService.getUserInfo(userId);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "403", description = "권한 없음"),
+            @ApiResponse(responseCode = "404", description = "요청한 회원 정보 없음")
+    })
     @PatchMapping("")
     public UserResponseDto updateUser(@RequestBody UserRequestDto requestDto){
         return userService.modifyUserInfo(requestDto);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "403", description = "권한 없음"),
+            @ApiResponse(responseCode = "404", description = "요청한 회원 정보 없음")
+    })
     @DeleteMapping("/{userId}")
     public SuccessResponseDto deleteUser(@PathVariable(name = "userId") String userId){
         return userService.deleteUser(userId);
