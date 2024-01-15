@@ -4,5 +4,5 @@ spring:
       uri: http://127.0.0.1:8888
 #      name: phc-world-config-service
       name: user-service
-  profiles:
-    active: dev
+#  profiles:
+#    active: dev

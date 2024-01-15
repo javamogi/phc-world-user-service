@@ -6,7 +6,8 @@ import com.phcworld.userservice.dto.UserRequestDto;
 import com.phcworld.userservice.dto.UserResponseDto;
 import com.phcworld.userservice.jwt.dto.TokenDto;
 import com.phcworld.userservice.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,9 @@ public class UserApiController {
     private final UserService userService;
     private final Environment env;
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "error")
+    })
     @GetMapping("/health_check")
     public String status(){
         return String.format("It's Working in User Service on PORT %s",

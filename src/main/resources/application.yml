@@ -1,14 +1,17 @@
 spring:
   application:
     name: user-api-service
-  rabbitmq:
-    host: 127.0.0.1
-    port: 5672
-    username: guest
-    password: guest
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+#  rabbitmq:
+#    host: 127.0.0.1
+#    port: 5672
+#    username: guest
+#    password: guest
 
   profiles:
-    active: dev
+    active: mysql
     include: mail
 
 server:
@@ -29,8 +32,11 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: refresh, health, beans, busrefresh
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: refresh, health, beans, busrefresh
+
+jwt:
+  secret: c3ByaW5nLXNlY3VyaXR5LWp3dC1waGMtd29ybGQtc2VjcmV0LWtleQ==
