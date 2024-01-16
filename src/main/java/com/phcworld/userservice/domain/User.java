@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serializable;
@@ -33,19 +34,26 @@ public class User implements Serializable {
 	@Column(nullable = false, length = 100)
 	private String password;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false, length = 50, unique = true)
 	private String userId;
 
+	@Column(length = 50)
 	private String name;
 
 	@Enumerated(EnumType.STRING)
 	private Authority authority;
 
+	@Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP()")
 	private LocalDateTime createDate;
 
+	@Column(nullable = false)
+	private LocalDateTime updateDate;
+
+	@Column(length = 100)
 	private String profileImage;
 
 	@ColumnDefault("false")
+	@Column(nullable = false)
 	private Boolean isDeleted;
 	
 	public String getFormattedCreateDate() {

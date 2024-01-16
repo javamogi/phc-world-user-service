@@ -12,7 +12,6 @@ public class Payload {
     private String user_id;
     private String name;
     private String authority;
-    private long create_date;
+    private String update_date;
     private String profile_image;
-    private int is_deleted;
 }

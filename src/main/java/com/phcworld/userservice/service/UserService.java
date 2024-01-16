@@ -23,8 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -55,7 +53,6 @@ public class UserService {
 				.name(requestUser.name())
 				.password(passwordEncoder.encode(requestUser.password()))
 				.authority(Authority.ROLE_USER)
-				.createDate(LocalDateTime.now())
 				.profileImage("blank-profile-picture.png")
 				.userId(UUID.randomUUID().toString())
 				.build();
