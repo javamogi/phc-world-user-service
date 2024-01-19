@@ -14,4 +14,5 @@ public class Payload {
     private String authority;
     private String update_date;
     private String profile_image;
+    private byte is_deleted;
 }

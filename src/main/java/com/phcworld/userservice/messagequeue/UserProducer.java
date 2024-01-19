@@ -30,9 +30,9 @@ public class UserProducer {
             new Field("string", false, "password"),
             new Field("string", false, "user_id"),
             new Field("string", true, "name"),
-            new Field("string", true, "authority"),
+            new Field("string", false, "authority"),
             new Field("string", true, "profile_image"),
-//            new Field("int8", true, "is_deleted"),
+            new Field("int8", false, "is_deleted"),
             new Field("string", false, "update_date")
 //            new Field("int64", true, "create_date")
 //            {
@@ -48,7 +48,6 @@ public class UserProducer {
             .build();
 
     public User send(String topic, User user){
-        log.info("insert time : {}", user.getCreateDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")));
         Payload payload = Payload.builder()
                 .email(user.getEmail())
                 .password(user.getPassword())
@@ -57,6 +56,7 @@ public class UserProducer {
                 .authority(user.getAuthority().toString())
                 .update_date(LocalDateTime.now().withNano(0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")))
                 .profile_image(user.getProfileImage())
+                .is_deleted((byte) (Boolean.TRUE.equals(user.getIsDeleted()) ? 1 : 0))
                 .build();
 
         KafkaUserDto kafkaUserDto = KafkaUserDto.builder()

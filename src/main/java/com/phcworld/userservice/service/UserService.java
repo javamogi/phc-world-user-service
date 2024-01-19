@@ -29,7 +29,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+//@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
@@ -55,6 +55,7 @@ public class UserService {
 				.authority(Authority.ROLE_USER)
 				.profileImage("blank-profile-picture.png")
 				.userId(UUID.randomUUID().toString())
+				.isDeleted(false)
 				.build();
 
 		userProducer.send("users", user);
@@ -100,6 +101,9 @@ public class UserService {
 //					FileType.USER_PROFILE_IMG);
 		}
 		user.modify(passwordEncoder.encode(requestDto.password()), requestDto.name(), profileImg);
+
+		userProducer.send("users", user);
+
 		return UserResponseDto.of(user);
 	}
 
@@ -113,6 +117,7 @@ public class UserService {
 		User user = userRepository.findByUserId(userId)
 				.orElseThrow(NotFoundException::new);
 		user.delete();
+		userProducer.send("users", user);
 
 		return SuccessResponseDto.builder()
 				.statusCode(200)

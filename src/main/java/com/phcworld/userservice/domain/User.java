@@ -41,6 +41,7 @@ public class User implements Serializable {
 	private String name;
 
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private Authority authority;
 
 	@Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP()")
@@ -52,7 +53,7 @@ public class User implements Serializable {
 	@Column(length = 100)
 	private String profileImage;
 
-	@ColumnDefault("false")
+//	@ColumnDefault("false")
 	@Column(nullable = false)
 	private Boolean isDeleted;
 	
