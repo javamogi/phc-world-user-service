@@ -5,6 +5,7 @@
 > * JAVA 17
 > * Spring-Boot 3.2.1
 > * Gradle 8.5
+> * Spring-Security
 > * JPA, QueryDSL
 > * Spring Cloud Eureka Client
 > * Spring Cloud Bus
@@ -18,6 +19,8 @@
 *** 
 ### MSA
 ![PHC-WORL_MSA_Architecture_User](https://github.com/javamogi/phc-world-user-service/assets/40781237/3dec0c12-9976-4e9d-97cb-cfd5f893cda4)
+### Swagger
+![swagger](https://github.com/javamogi/phc-world-user-service/assets/40781237/59f9594a-eeae-4d60-bc38-fb4717cea456)
 *** 
 #### [PHC-WORLD Eureka Server](https://github.com/javamogi/phcworld-discovery)
 #### [PHC-WORLD Config](https://github.com/javamogi/phc-world-config)
