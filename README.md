@@ -16,6 +16,7 @@
 > * MySQL
 > * H2-database
 > * Swagger
+> * JUnit5
 *** 
 ### MSA
 ![PHC-WORL_MSA_Architecture_User](https://github.com/javamogi/phc-world-user-service/assets/40781237/3dec0c12-9976-4e9d-97cb-cfd5f893cda4)
