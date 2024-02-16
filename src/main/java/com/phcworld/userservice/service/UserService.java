@@ -36,17 +36,14 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
-	private final CustomUserDetailsService userDetailsService;
-	private final TokenProvider tokenProvider;
 //	private final UploadFileService uploadFileService;
 	private final UserProducer userProducer;
 
 	public User registerUser(UserRequestDto requestUser) {
-		boolean isFind = userRepository.findByEmail(requestUser.email())
-				.isPresent();
-		if(isFind){
-			throw new DuplicationException();
-		}
+		userRepository.findByEmail(requestUser.email())
+				.ifPresent(user -> {
+					throw new DuplicationException();
+				});
 
 		User user = User.builder()
 				.email(requestUser.email())
@@ -62,21 +59,6 @@ public class UserService {
 
 //		return userRepository.save(user);
 		return user;
-	}
-
-	public TokenDto login(LoginUserRequestDto requestUser) {
-		// 비밀번호 확인 + spring security 객체 생성 후 JWT 토큰 생성
-		Authentication authentication = SecurityUtil.getAuthentication(requestUser, userDetailsService, passwordEncoder);
-
-		// 토큰 발급
-		return tokenProvider.generateTokenDto(authentication);
-	}
-
-	public UserResponseDto getLoginUserInfo(){
-		String userId = SecurityUtil.getCurrentMemberId();
-		User user = userRepository.findByUserId(userId)
-				.orElseThrow(NotFoundException::new);
-		return UserResponseDto.of(user);
 	}
 
 	public UserResponseDto getUserInfo(String userId){
@@ -123,15 +105,6 @@ public class UserService {
 				.statusCode(200)
 				.message("삭제 성공")
 				.build();
-	}
-
-	public String logout() {
-		return "로그아웃";
-	}
-
-	public TokenDto getNewToken() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return tokenProvider.generateTokenDto(authentication);
 	}
 
 	public Map<String, UserResponseDto> getUsersByUserIdList(List<String> userIds){

@@ -1,10 +1,8 @@
 package com.phcworld.userservice.web;
 
-import com.phcworld.userservice.dto.LoginUserRequestDto;
 import com.phcworld.userservice.dto.SuccessResponseDto;
 import com.phcworld.userservice.dto.UserRequestDto;
 import com.phcworld.userservice.dto.UserResponseDto;
-import com.phcworld.userservice.jwt.dto.TokenDto;
 import com.phcworld.userservice.service.UserService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -41,19 +39,6 @@ public class UserApiController {
         return UserResponseDto.of(userService.registerUser(user));
     }
 
-    @PostMapping("/login")
-    public TokenDto login(@Valid @RequestBody LoginUserRequestDto user) {
-        return userService.login(user);
-    }
-
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "요청한 회원 정보 없음")
-    })
-    @GetMapping("/userInfo")
-    public UserResponseDto getUserInfo(){
-        return userService.getLoginUserInfo();
-    }
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "요청한 회원 정보 없음")
     })
@@ -78,16 +63,6 @@ public class UserApiController {
     @DeleteMapping("/{userId}")
     public SuccessResponseDto deleteUser(@PathVariable(name = "userId") String userId){
         return userService.deleteUser(userId);
-    }
-
-    @GetMapping("/logout")
-    public String logout(){
-        return userService.logout();
-    }
-
-    @GetMapping("/newToken")
-    public TokenDto getToken(){
-        return userService.getNewToken();
     }
 
     @GetMapping("")

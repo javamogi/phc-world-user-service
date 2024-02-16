@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 public class TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer ";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
-//    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 5;  // 10초
+//    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 *24;            // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 3;  // 3일
 //    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 10;  // 10초
 

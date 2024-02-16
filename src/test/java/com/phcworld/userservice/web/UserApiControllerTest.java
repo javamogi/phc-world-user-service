@@ -2,10 +2,10 @@ package com.phcworld.userservice.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.phcworld.userservice.domain.Authority;
-import com.phcworld.userservice.dto.LoginUserRequestDto;
 import com.phcworld.userservice.dto.UserRequestDto;
 import com.phcworld.userservice.jwt.TokenProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.DialectOverride;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@Disabled("Disabled when build")
+@Disabled("kafka 연동")
 class UserApiControllerTest {
 
     @Autowired
@@ -235,90 +235,6 @@ class UserApiControllerTest {
     }
 
     @Test
-    void 회원_로그인_실패_비밀번호_틀림() throws Exception {
-        LoginUserRequestDto requestDto = LoginUserRequestDto.builder()
-                .email("test@test.test")
-                .password("testt")
-                .build();
-        String request = objectMapper.writeValueAsString(requestDto);
-        this.mvc.perform(post("/users/login")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andDo(print())
-                .andExpect(jsonPath("$.error").value("잘못된 요청입니다."))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void 회원_로그인_실패_없는_이메일() throws Exception {
-        LoginUserRequestDto requestDto = LoginUserRequestDto.builder()
-                .email("testtest@test.test")
-                .password("test")
-                .build();
-        String request = objectMapper.writeValueAsString(requestDto);
-        this.mvc.perform(post("/users/login")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andDo(print())
-                .andExpect(jsonPath("$.error").value("존재하지 않는 엔티티입니다."))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void 회원_로그인_실패_삭제된_회원() throws Exception {
-        LoginUserRequestDto requestDto = LoginUserRequestDto.builder()
-                .email("test3@test.test")
-                .password("test3")
-                .build();
-        String request = objectMapper.writeValueAsString(requestDto);
-        this.mvc.perform(post("/users/login")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andDo(print())
-                .andExpect(status().isConflict());
-    }
-
-    @Test
-    void 로그인_성공() throws Exception {
-        LoginUserRequestDto requestDto = LoginUserRequestDto.builder()
-                .email("test@test.test")
-                .password("test")
-                .build();
-        String request = objectMapper.writeValueAsString(requestDto);
-
-        this.mvc.perform(post("/users/login")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void 로그인_회원_정보_가져오기() throws Exception {
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(new String[]{Authority.ROLE_ADMIN.toString()})
-                        .map(SimpleGrantedAuthority::new)
-                        .toList();
-        UserDetails principal = new org.springframework.security.core.userdetails.User("a2240b59-47f6-4ad4-ba07-f7c495909f40", "", authorities);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", authorities);
-        long now = (new Date()).getTime();
-        String accessToken = tokenProvider.generateAccessToken(authentication, now);
-
-        this.mvc.perform(get("/users/userInfo")
-                        .with(csrf())
-                        .header("Authorization", "Bearer " + accessToken))
-                .andDo(print())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.email").value("test@test.test"))
-                .andExpect(jsonPath("$.name").value("테스트"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
     void 요청_회원_정보_가져오기() throws Exception {
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(new String[]{Authority.ROLE_ADMIN.toString()})
@@ -461,24 +377,6 @@ class UserApiControllerTest {
                         .header("Authorization", "Bearer " + accessToken))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    void 새로운_토큰_발행() throws Exception {
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(new String[]{Authority.ROLE_USER.toString()})
-                        .map(SimpleGrantedAuthority::new)
-                        .toList();
-        UserDetails principal = new org.springframework.security.core.userdetails.User("2", "", authorities);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", authorities);
-        long now = (new Date()).getTime();
-        String refreshToken = tokenProvider.generateRefreshToken(authentication, now);
-
-        this.mvc.perform(get("/users/newToken")
-                        .with(csrf())
-                        .header("Authorization", "Bearer " + refreshToken))
-                .andDo(print())
-                .andExpect(status().isOk());
     }
 
     @Test
