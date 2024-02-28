@@ -4,6 +4,7 @@ import com.phcworld.userservice.dto.SuccessResponseDto;
 import com.phcworld.userservice.dto.UserRequestDto;
 import com.phcworld.userservice.dto.UserResponseDto;
 import com.phcworld.userservice.service.UserService;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -26,6 +27,7 @@ public class UserApiController {
     private final Environment env;
 
     @GetMapping("/health_check")
+    @Timed(value = "users.status", longTask = true)
     public String status(){
         return String.format("It's Working in User Service on PORT %s",
                 env.getProperty("local.server.port"));
