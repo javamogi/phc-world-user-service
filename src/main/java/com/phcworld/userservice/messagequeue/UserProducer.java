@@ -2,18 +2,17 @@ package com.phcworld.userservice.messagequeue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.phcworld.userservice.domain.User;
-import com.phcworld.userservice.dto.Field;
-import com.phcworld.userservice.dto.KafkaUserDto;
-import com.phcworld.userservice.dto.Payload;
-import com.phcworld.userservice.dto.Schema;
+import com.phcworld.userservice.infrastructure.UserEntity;
+import com.phcworld.userservice.messagequeue.port.Field;
+import com.phcworld.userservice.messagequeue.port.KafkaUserDto;
+import com.phcworld.userservice.messagequeue.port.Payload;
+import com.phcworld.userservice.messagequeue.port.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +46,7 @@ public class UserProducer {
             .name("users")
             .build();
 
-    public User send(String topic, User user){
+    public UserEntity send(String topic, UserEntity user){
         Payload payload = Payload.builder()
                 .email(user.getEmail())
                 .password(user.getPassword())

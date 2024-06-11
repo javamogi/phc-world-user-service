@@ -1,11 +1,10 @@
-package com.phcworld.userservice.web;
+package com.phcworld.userservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.phcworld.userservice.domain.Authority;
-import com.phcworld.userservice.dto.UserRequestDto;
+import com.phcworld.userservice.domain.port.UserRequestDto;
 import com.phcworld.userservice.jwt.TokenProvider;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.DialectOverride;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

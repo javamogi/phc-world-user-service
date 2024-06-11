@@ -1,4 +1,4 @@
-package com.phcworld.userservice.dto;
+package com.phcworld.userservice.controller.port;
 
 import lombok.Builder;
 

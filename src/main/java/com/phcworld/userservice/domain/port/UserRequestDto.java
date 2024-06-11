@@ -1,4 +1,4 @@
-package com.phcworld.userservice.dto;
+package com.phcworld.userservice.domain.port;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

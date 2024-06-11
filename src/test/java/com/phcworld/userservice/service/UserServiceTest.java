@@ -1,22 +1,18 @@
 package com.phcworld.userservice.service;
 
 import com.phcworld.userservice.domain.Authority;
-import com.phcworld.userservice.domain.User;
-import com.phcworld.userservice.dto.LoginUserRequestDto;
-import com.phcworld.userservice.dto.SuccessResponseDto;
-import com.phcworld.userservice.dto.UserRequestDto;
-import com.phcworld.userservice.dto.UserResponseDto;
-import com.phcworld.userservice.exception.model.DeletedEntityException;
+import com.phcworld.userservice.infrastructure.UserEntity;
+import com.phcworld.userservice.controller.port.SuccessResponseDto;
+import com.phcworld.userservice.domain.port.UserRequestDto;
+import com.phcworld.userservice.controller.port.UserResponseDto;
 import com.phcworld.userservice.exception.model.DuplicationException;
 import com.phcworld.userservice.exception.model.NotFoundException;
 import com.phcworld.userservice.exception.model.UnauthorizedException;
-import com.phcworld.userservice.jwt.dto.TokenDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.BadCredentialsException;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +38,7 @@ class UserServiceTest {
                 .name("테스트3")
                 .build();
 
-        User user = User.builder()
+        UserEntity user = UserEntity.builder()
                 .email(requestDto.email())
                 .password(requestDto.password())
                 .name(requestDto.name())
@@ -53,7 +49,7 @@ class UserServiceTest {
                 .build();
 
         when(userService.registerUser(requestDto)).thenReturn(user);
-        User savedUser = userService.registerUser(requestDto);
+        UserEntity savedUser = userService.registerUser(requestDto);
         assertThat(savedUser).isEqualTo(user);
     }
 

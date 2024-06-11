@@ -1,7 +1,7 @@
 package com.phcworld.userservice.service;
 
-import com.phcworld.userservice.dto.LoginUserRequestDto;
-import com.phcworld.userservice.dto.UserResponseDto;
+import com.phcworld.userservice.domain.port.LoginUserRequestDto;
+import com.phcworld.userservice.controller.port.UserResponseDto;
 import com.phcworld.userservice.exception.model.DeletedEntityException;
 import com.phcworld.userservice.exception.model.NotFoundException;
 import com.phcworld.userservice.jwt.dto.TokenDto;
@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.BadCredentialsException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)

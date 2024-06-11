@@ -1,7 +1,7 @@
 package com.phcworld.userservice.security.utils;
 
 import com.phcworld.userservice.domain.Authority;
-import com.phcworld.userservice.dto.LoginUserRequestDto;
+import com.phcworld.userservice.domain.port.LoginUserRequestDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;

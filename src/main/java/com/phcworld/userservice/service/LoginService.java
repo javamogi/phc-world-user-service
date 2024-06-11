@@ -1,12 +1,12 @@
 package com.phcworld.userservice.service;
 
-import com.phcworld.userservice.domain.User;
-import com.phcworld.userservice.dto.LoginUserRequestDto;
-import com.phcworld.userservice.dto.UserResponseDto;
+import com.phcworld.userservice.infrastructure.UserEntity;
+import com.phcworld.userservice.domain.port.LoginUserRequestDto;
+import com.phcworld.userservice.controller.port.UserResponseDto;
 import com.phcworld.userservice.exception.model.NotFoundException;
 import com.phcworld.userservice.jwt.TokenProvider;
 import com.phcworld.userservice.jwt.dto.TokenDto;
-import com.phcworld.userservice.repository.UserRepository;
+import com.phcworld.userservice.infrastructure.UserJpaRepository;
 import com.phcworld.userservice.security.utils.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 public class LoginService {
 
     private final TokenProvider tokenProvider;
-    private final UserRepository userRepository;
+    private final UserJpaRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
 
@@ -42,7 +42,7 @@ public class LoginService {
 
     public UserResponseDto getLoginUserInfo(){
         String userId = SecurityUtil.getCurrentMemberId();
-        User user = userRepository.findByUserId(userId)
+        UserEntity user = userRepository.findByUserId(userId)
                 .orElseThrow(NotFoundException::new);
         return UserResponseDto.of(user);
     }

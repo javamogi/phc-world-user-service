@@ -1,8 +1,8 @@
-package com.phcworld.userservice.web;
+package com.phcworld.userservice.controller;
 
-import com.phcworld.userservice.dto.SuccessResponseDto;
-import com.phcworld.userservice.dto.UserRequestDto;
-import com.phcworld.userservice.dto.UserResponseDto;
+import com.phcworld.userservice.controller.port.SuccessResponseDto;
+import com.phcworld.userservice.domain.port.UserRequestDto;
+import com.phcworld.userservice.controller.port.UserResponseDto;
 import com.phcworld.userservice.service.UserService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

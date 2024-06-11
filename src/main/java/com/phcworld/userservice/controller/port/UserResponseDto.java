@@ -1,6 +1,6 @@
-package com.phcworld.userservice.dto;
+package com.phcworld.userservice.controller.port;
 
-import com.phcworld.userservice.domain.User;
+import com.phcworld.userservice.infrastructure.UserEntity;
 import lombok.Builder;
 
 @Builder
@@ -11,7 +11,7 @@ public record UserResponseDto(
         String profileImage,
         String userId
 ) {
-    public static UserResponseDto of(User user){
+    public static UserResponseDto of(UserEntity user){
         return UserResponseDto.builder()
                 .email(user.getEmail())
                 .name(user.getName())
