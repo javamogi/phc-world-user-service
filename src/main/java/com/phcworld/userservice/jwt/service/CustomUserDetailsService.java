@@ -29,9 +29,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    // DB 에 User 값이 존재한다면 UserDetails 객체로 만들어서 리턴
     private UserDetails createUserDetails(UserEntity user) {
-        if(user.getIsDeleted()){
+        if(Boolean.TRUE.equals(user.getIsDeleted())){
             throw new DeletedEntityException();
         }
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(user.getAuthority().toString());

@@ -2,6 +2,7 @@ package com.phcworld.userservice.messagequeue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.phcworld.userservice.domain.User;
 import com.phcworld.userservice.infrastructure.UserEntity;
 import com.phcworld.userservice.messagequeue.port.Field;
 import com.phcworld.userservice.messagequeue.port.KafkaUserDto;
@@ -46,7 +47,8 @@ public class UserProducer {
             .name("users")
             .build();
 
-    public UserEntity send(String topic, UserEntity user){
+    public User send(String topic, User user){
+        log.info("user : {}", user);
         Payload payload = Payload.builder()
                 .email(user.getEmail())
                 .password(user.getPassword())
@@ -55,7 +57,7 @@ public class UserProducer {
                 .authority(user.getAuthority().toString())
                 .update_date(LocalDateTime.now().withNano(0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")))
                 .profile_image(user.getProfileImage())
-                .is_deleted((byte) (Boolean.TRUE.equals(user.getIsDeleted()) ? 1 : 0))
+                .is_deleted((byte) (Boolean.TRUE.equals(user.isDeleted()) ? 1 : 0))
                 .build();
 
         KafkaUserDto kafkaUserDto = KafkaUserDto.builder()

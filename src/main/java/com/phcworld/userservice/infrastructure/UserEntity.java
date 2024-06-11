@@ -1,6 +1,7 @@
 package com.phcworld.userservice.infrastructure;
 
 import com.phcworld.userservice.domain.Authority;
+import com.phcworld.userservice.domain.User;
 import com.phcworld.userservice.utils.FileConvertUtils;
 import com.phcworld.userservice.utils.LocalDateTimeUtils;
 import jakarta.persistence.*;
@@ -55,7 +56,7 @@ public class UserEntity implements Serializable {
 //	@ColumnDefault("false")
 	@Column(nullable = false)
 	private Boolean isDeleted;
-	
+
 	public String getFormattedCreateDate() {
 		return LocalDateTimeUtils.getTime(createDate);
 	}
@@ -88,5 +89,36 @@ public class UserEntity implements Serializable {
 
 	public void delete() {
 		this.isDeleted = true;
+	}
+
+	public User toModel() {
+		return User.builder()
+				.id(id)
+				.email(email)
+				.password(password)
+				.userId(userId)
+				.name(name)
+				.authority(authority)
+				.profileImage(profileImage)
+				.createDate(createDate)
+				.updateDate(updateDate)
+				.profileImage(profileImage)
+				.isDeleted(isDeleted)
+				.build();
+	}
+
+	public static UserEntity from(User user) {
+		return UserEntity.builder()
+				.id(user.getId())
+				.email(user.getEmail())
+				.password(user.getPassword())
+				.userId(user.getUserId())
+				.name(user.getName())
+				.authority(user.getAuthority())
+				.createDate(user.getCreateDate())
+				.updateDate(user.getUpdateDate())
+				.profileImage(user.getProfileImage())
+				.isDeleted(user.isDeleted())
+				.build();
 	}
 }
