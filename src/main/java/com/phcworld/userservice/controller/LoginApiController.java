@@ -8,6 +8,7 @@ import com.phcworld.userservice.jwt.dto.TokenDto;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,18 +18,25 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @Slf4j
+@Builder
 public class LoginApiController {
 
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public TokenDto login(@Valid @RequestBody LoginRequest user) {
-        return loginService.login(user);
+    public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginRequest user) {
+        TokenDto token = loginService.login(user);
+        return ResponseEntity
+                .ok()
+                .body(token);
     }
 
     @GetMapping("/newToken")
-    public TokenDto getToken(){
-        return loginService.getNewToken();
+    public ResponseEntity<TokenDto> getNewToken(){
+        TokenDto token = loginService.getNewToken();
+        return ResponseEntity
+                .ok()
+                .body(token);
     }
 
     @ApiResponses(value = {
