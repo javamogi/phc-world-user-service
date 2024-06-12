@@ -2,6 +2,7 @@ package com.phcworld.userservice.security.utils;
 
 import com.phcworld.userservice.domain.Authority;
 import com.phcworld.userservice.domain.port.LoginRequest;
+import com.phcworld.userservice.jwt.service.CustomAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,17 +36,6 @@ public class SecurityUtil {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
         return Authority.valueOf(authorities);
-    }
-
-    public static Authentication getAuthentication(LoginRequest requestDto,
-                                                   UserDetailsService userDetailsService,
-                                                   PasswordEncoder passwordEncoder) {
-        UsernamePasswordAuthenticationToken authenticationToken
-                = new UsernamePasswordAuthenticationToken(requestDto.email(), requestDto.password());
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder);
-        return authenticationProvider.authenticate(authenticationToken);
     }
 
     public static boolean matchUserId(String userId) {

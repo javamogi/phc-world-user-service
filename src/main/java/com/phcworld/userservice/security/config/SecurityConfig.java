@@ -4,12 +4,15 @@ import com.phcworld.userservice.jwt.config.JwtSecurityConfig;
 import com.phcworld.userservice.jwt.entry.JwtAuthenticationEntryPoint;
 import com.phcworld.userservice.jwt.filter.JwtExceptionFilter;
 import com.phcworld.userservice.jwt.handler.JwtAccessDeniedHandler;
+import com.phcworld.userservice.jwt.service.CustomAuthenticationProvider;
 import com.phcworld.userservice.service.port.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -29,6 +32,7 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtExceptionFilter jwtExceptionFilter;
     private final Environment env;
+    private final CustomAuthenticationProvider customAuthenticationProvider;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -75,6 +79,7 @@ public class SecurityConfig {
 //                                .hasIpAddress(env.getProperty("gateway.ip"))
                                 .anyRequest().authenticated()
                 )
+                .authenticationProvider(customAuthenticationProvider)
                 // enable h2-console
                 .headers(headers->
                         headers.contentTypeOptions(contentTypeOptionsConfig ->
@@ -91,6 +96,11 @@ public class SecurityConfig {
                 .with(new JwtSecurityConfig(tokenProvider, jwtExceptionFilter), Customizer.withDefaults())
                 .build();
 
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
 }

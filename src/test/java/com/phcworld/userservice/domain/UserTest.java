@@ -26,7 +26,7 @@ class UserTest {
 
         // when
         User user = User.from(userRequest,
-                new FakePasswordEncode("test"),
+                new FakePasswordEncode(),
                 new FakeLocalDateTimeHolder(now),
                 new TestUuidHolder("test-1234"));
 
@@ -67,7 +67,7 @@ class UserTest {
                 .build();
 
         // when
-        user = user.modify(userRequest, "test.png", new FakePasswordEncode("test2"), new FakeLocalDateTimeHolder(now));
+        user = user.modify(userRequest, "test.png", new FakePasswordEncode(), new FakeLocalDateTimeHolder(now));
 
         // then
         assertThat(user.getId()).isEqualTo(1);

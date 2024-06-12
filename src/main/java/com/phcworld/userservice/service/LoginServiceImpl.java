@@ -8,8 +8,11 @@ import com.phcworld.userservice.jwt.dto.TokenDto;
 import com.phcworld.userservice.security.utils.SecurityUtil;
 import com.phcworld.userservice.service.port.TokenProvider;
 import com.phcworld.userservice.service.port.UserRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,17 +22,21 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Builder
 public class LoginServiceImpl implements LoginService {
 
     private final TokenProvider tokenProvider;
-    private final PasswordEncoder passwordEncoder;
-    private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
+
+    private final AuthenticationManager authenticationManager;
 
     @Override
     public TokenDto login(LoginRequest request) {
         // 비밀번호 확인 + spring security 객체 생성 후 JWT 토큰 생성
-        Authentication authentication = SecurityUtil.getAuthentication(request, userDetailsService, passwordEncoder);
+        Authentication authentication
+                = authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(request.email(), request.password())
+                );
 
         // 토큰 발급
         return tokenProvider.generateTokenDto(authentication);
