@@ -1,93 +1,88 @@
 package com.phcworld.userservice.domain;
 
-import com.phcworld.userservice.utils.FileConvertUtils;
-import com.phcworld.userservice.utils.LocalDateTimeUtils;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.Accessors;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicUpdate;
+import com.phcworld.userservice.domain.port.UserRequest;
+import com.phcworld.userservice.exception.model.DeletedEntityException;
+import com.phcworld.userservice.service.port.LocalDateTimeHolder;
+import com.phcworld.userservice.service.port.UuidHolder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.UUID;
 
-@Entity
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-@Accessors(chain = true)
-@ToString(exclude = "password")
-@Table(name = "USERS")
-@DynamicUpdate
-public class User implements Serializable {
+@AllArgsConstructor
+public class User {
+    private Long id;
+    private String email;
+    private String password;
+    private String userId;
+    private String name;
+    private Authority authority;
+    private LocalDateTime createDate;
+    private LocalDateTime updateDate;
+    private String profileImage;
+    private boolean isDeleted;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    public String getProfileImageUrl(){
+        return "http://localhost:8080/image/" + profileImage;
+    }
 
-	@Column(nullable = false, length = 50, unique = true)
-	private String email;
+    public static User from(UserRequest request,
+                            PasswordEncoder passwordEncoder,
+                            LocalDateTimeHolder timeHolder,
+                            UuidHolder uuidHolder) {
+        return User.builder()
+                .email(request.email())
+                .name(request.name())
+                .password(passwordEncoder.encode(request.password()))
+                .authority(Authority.ROLE_USER)
+                .createDate(timeHolder.now())
+                .updateDate(timeHolder.now())
+                .profileImage("blank-profile-picture.png")
+                .userId(uuidHolder.random())
+                .isDeleted(false)
+                .build();
+    }
 
-	@Column(nullable = false, length = 100)
-	private String password;
+    public User modify(UserRequest request,
+                       String profileImg,
+                       PasswordEncoder passwordEncoder,
+                       LocalDateTimeHolder timeHolder) {
+        return User.builder()
+                .id(id)
+                .email(email)
+                .password(passwordEncoder.encode(request.password()))
+                .userId(userId)
+                .name(request.name())
+                .authority(authority)
+                .createDate(createDate)
+                .updateDate(timeHolder.now())
+                .profileImage(profileImg)
+                .isDeleted(isDeleted)
+                .build();
+    }
 
-	@Column(nullable = false, length = 50, unique = true)
-	private String userId;
+    public User delete() {
+        if(this.isDeleted) {
+            throw new DeletedEntityException();
+        }
+        this.isDeleted = true;
+        return User.builder()
+                .id(id)
+                .email(email)
+                .password(email)
+                .userId(userId)
+                .name(name)
+                .authority(authority)
+                .createDate(createDate)
+                .updateDate(updateDate)
+                .profileImage(profileImage)
+                .isDeleted(isDeleted)
+                .build();
+    }
 
-	@Column(length = 50)
-	private String name;
-
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private Authority authority;
-
-	@Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP()")
-	private LocalDateTime createDate;
-
-	@Column(nullable = false)
-	private LocalDateTime updateDate;
-
-	@Column(length = 100)
-	private String profileImage;
-
-//	@ColumnDefault("false")
-	@Column(nullable = false)
-	private Boolean isDeleted;
-	
-	public String getFormattedCreateDate() {
-		return LocalDateTimeUtils.getTime(createDate);
-	}
-
-	public String getProfileImageData(){
-		return FileConvertUtils.getFileData(profileImage);
-	}
-	public String getProfileImageUrl(){
-		return "http://localhost:8080/image/" + profileImage;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		User user = (User) o;
-		return Objects.equals(id, user.id) && Objects.equals(email, user.email) && Objects.equals(name, user.name) && authority == user.authority;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, email, name, authority);
-	}
-
-	public void modify(String password, String name, String profileImage) {
-		this.password = password;
-		this.name = name;
-		this.profileImage = profileImage;
-	}
-
-	public void delete() {
-		this.isDeleted = true;
-	}
 }

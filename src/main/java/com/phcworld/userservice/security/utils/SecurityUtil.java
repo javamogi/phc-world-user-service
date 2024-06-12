@@ -1,7 +1,8 @@
 package com.phcworld.userservice.security.utils;
 
 import com.phcworld.userservice.domain.Authority;
-import com.phcworld.userservice.dto.LoginUserRequestDto;
+import com.phcworld.userservice.domain.port.LoginRequest;
+import com.phcworld.userservice.jwt.service.CustomAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -25,7 +26,6 @@ public class SecurityUtil {
         return authentication.getName();
     }
 
-//    public static String getAuthorities() {
     public static Authority getAuthorities() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -36,20 +36,13 @@ public class SecurityUtil {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
         return Authority.valueOf(authorities);
-//        return authentication.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .collect(Collectors.joining(","));
     }
 
-    public static Authentication getAuthentication(LoginUserRequestDto requestDto,
-                                                   UserDetailsService userDetailsService,
-                                                   PasswordEncoder passwordEncoder) {
-        UsernamePasswordAuthenticationToken authenticationToken
-                = new UsernamePasswordAuthenticationToken(requestDto.email(), requestDto.password());
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder);
-        return authenticationProvider.authenticate(authenticationToken);
+    public static boolean matchUserId(String userId) {
+        return getCurrentMemberId().equals(userId);
     }
 
+    public static boolean matchAdminAuthority() {
+        return getAuthorities() != Authority.ROLE_ADMIN;
+    }
 }
