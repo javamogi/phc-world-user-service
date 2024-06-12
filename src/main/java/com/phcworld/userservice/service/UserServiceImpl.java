@@ -6,11 +6,12 @@ import com.phcworld.userservice.domain.port.UserRequest;
 import com.phcworld.userservice.exception.model.DuplicationException;
 import com.phcworld.userservice.exception.model.ForbiddenException;
 import com.phcworld.userservice.exception.model.NotFoundException;
-import com.phcworld.userservice.messagequeue.UserProducerImpl;
 import com.phcworld.userservice.security.utils.SecurityUtil;
 import com.phcworld.userservice.service.port.LocalDateTimeHolder;
 import com.phcworld.userservice.service.port.UserProducer;
 import com.phcworld.userservice.service.port.UserRepository;
+import com.phcworld.userservice.service.port.UuidHolder;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,11 +19,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Builder
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
@@ -30,6 +33,7 @@ public class UserServiceImpl implements UserService {
 //	private final UploadFileService uploadFileService;
 	private final UserProducer userProducer;
 	private final LocalDateTimeHolder localDateTimeHolder;
+	private final UuidHolder uuidHolder;
 
 	@Override
 	public User register(UserRequest requestUser) {
@@ -38,7 +42,10 @@ public class UserServiceImpl implements UserService {
 					throw new DuplicationException();
 				});
 
-		User user = User.from(requestUser, passwordEncoder, localDateTimeHolder);
+		User user = User.from(requestUser,
+				passwordEncoder,
+				localDateTimeHolder,
+				uuidHolder);
 //		return userRepository.save(user);
 		return userProducer.send("users", user);
 	}
@@ -85,9 +92,9 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByUserIds(userIds)
 				.stream()
 				.collect(Collectors.toMap(
-						User::getUserId,
-						User::getUser
-					)
+								User::getUserId,
+								Function.identity()
+						)
 				);
 	}
 }

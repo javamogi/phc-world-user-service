@@ -3,6 +3,7 @@ package com.phcworld.userservice.domain;
 import com.phcworld.userservice.domain.port.UserRequest;
 import com.phcworld.userservice.exception.model.DeletedEntityException;
 import com.phcworld.userservice.service.port.LocalDateTimeHolder;
+import com.phcworld.userservice.service.port.UuidHolder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,7 +31,10 @@ public class User {
         return "http://localhost:8080/image/" + profileImage;
     }
 
-    public static User from(UserRequest request, PasswordEncoder passwordEncoder, LocalDateTimeHolder timeHolder) {
+    public static User from(UserRequest request,
+                            PasswordEncoder passwordEncoder,
+                            LocalDateTimeHolder timeHolder,
+                            UuidHolder uuidHolder) {
         return User.builder()
                 .email(request.email())
                 .name(request.name())
@@ -39,7 +43,7 @@ public class User {
                 .createDate(timeHolder.now())
                 .updateDate(timeHolder.now())
                 .profileImage("blank-profile-picture.png")
-                .userId(UUID.randomUUID().toString())
+                .userId(uuidHolder.random())
                 .isDeleted(false)
                 .build();
     }
@@ -81,7 +85,4 @@ public class User {
                 .build();
     }
 
-    public User getUser(){
-        return this;
-    }
 }
