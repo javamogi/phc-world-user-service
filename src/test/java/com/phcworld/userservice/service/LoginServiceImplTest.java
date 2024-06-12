@@ -136,7 +136,7 @@ class LoginServiceImplTest {
     @DisplayName("새토큰 발행")
     void successNewToken(){
         // given
-        Authentication authentication = new FakeAuthentication(1, "test", Authority.ROLE_USER).getAuthentication();
+        Authentication authentication = new FakeAuthentication("1111", "test", Authority.ROLE_USER).getAuthentication();
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // when

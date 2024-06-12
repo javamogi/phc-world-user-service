@@ -16,7 +16,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class FakeAuthentication {
 
-    private final long id;
+    private final String userId;
     private final String password;
     private final Authority authority;
 
@@ -26,7 +26,7 @@ public class FakeAuthentication {
                         .map(SimpleGrantedAuthority::new)
                         .toList();
         UserDetails principal =  new User(
-                String.valueOf(id),
+                userId,
                 password,
                 authorities
         );

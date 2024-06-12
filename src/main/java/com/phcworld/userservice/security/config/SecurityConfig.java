@@ -32,7 +32,6 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtExceptionFilter jwtExceptionFilter;
     private final Environment env;
-    private final CustomAuthenticationProvider customAuthenticationProvider;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -79,7 +78,6 @@ public class SecurityConfig {
 //                                .hasIpAddress(env.getProperty("gateway.ip"))
                                 .anyRequest().authenticated()
                 )
-                .authenticationProvider(customAuthenticationProvider)
                 // enable h2-console
                 .headers(headers->
                         headers.contentTypeOptions(contentTypeOptionsConfig ->

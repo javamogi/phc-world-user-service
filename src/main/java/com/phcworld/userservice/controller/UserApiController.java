@@ -8,6 +8,7 @@ import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
@@ -24,6 +25,7 @@ import java.util.Map;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @Slf4j
+@Builder
 public class UserApiController {
 
     private final UserService userService;

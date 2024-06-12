@@ -6,9 +6,7 @@ import com.phcworld.userservice.controller.port.LoginService;
 import com.phcworld.userservice.jwt.service.CustomUserDetailsService;
 import com.phcworld.userservice.service.LoginServiceImpl;
 import com.phcworld.userservice.service.UserServiceImpl;
-import com.phcworld.userservice.service.port.LocalDateTimeHolder;
-import com.phcworld.userservice.service.port.TokenProvider;
-import com.phcworld.userservice.service.port.UserRepository;
+import com.phcworld.userservice.service.port.*;
 import lombok.Builder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,21 +29,25 @@ public class TestContainer {
 
     public final AuthenticationManager authenticationManager;
 
+    public final UserProducer userProducer;
+
     @Builder
-    public TestContainer(LocalDateTimeHolder localDateTimeHolder){
+    public TestContainer(LocalDateTimeHolder localDateTimeHolder, UuidHolder uuidHolder){
         this.passwordEncoder = new FakePasswordEncode();
         this.userRepository = new FakeUserRepository();
         this.tokenProvider = new FakeTokenProvider();
         this.userDetailsService = new CustomUserDetailsService(userRepository);
+        this.userProducer = new FakeKafkaProducer(userRepository);
         FakeAuthenticationProvider fakeAuthenticationProvider = new FakeAuthenticationProvider(
                 userDetailsService, passwordEncoder);
         this.authenticationManager =  new FakeAuthenticationManager(fakeAuthenticationProvider);
-
 
         UserServiceImpl userService = UserServiceImpl.builder()
                 .passwordEncoder(passwordEncoder)
                 .userRepository(userRepository)
                 .localDateTimeHolder(localDateTimeHolder)
+                .uuidHolder(uuidHolder)
+                .userProducer(userProducer)
                 .build();
         this.userApiController = UserApiController.builder()
                 .userService(userService)

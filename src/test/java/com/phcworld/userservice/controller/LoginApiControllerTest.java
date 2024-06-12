@@ -47,7 +47,7 @@ class LoginApiControllerTest {
                 .email("test@test.test")
                 .password("test")
                 .build();
-        Authentication authentication = new FakeAuthentication(1, "test", Authority.ROLE_USER).getAuthentication();
+        Authentication authentication = new FakeAuthentication("1111", "test", Authority.ROLE_USER).getAuthentication();
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // when
@@ -145,7 +145,7 @@ class LoginApiControllerTest {
         // given
         TestContainer testContainer = TestContainer.builder()
                 .build();
-        Authentication authentication = new FakeAuthentication(1, "test", Authority.ROLE_USER).getAuthentication();
+        Authentication authentication = new FakeAuthentication("1111", "test", Authority.ROLE_USER).getAuthentication();
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // when
