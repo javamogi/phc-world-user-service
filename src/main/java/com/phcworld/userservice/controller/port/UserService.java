@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserService {
-    public User register(UserRequest request);
-    public User getUser(String userId);
-    public User modify(UserRequest request);
-    public User delete(String userId);
-    public Map<String, User> getUsers(List<String> userIds);
+    User register(UserRequest request);
+    User getUser(String userId);
+    User modify(UserRequest request);
+    User delete(String userId);
+    Map<String, User> getUsers(List<String> userIds);
 }

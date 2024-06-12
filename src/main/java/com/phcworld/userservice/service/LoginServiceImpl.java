@@ -1,13 +1,12 @@
 package com.phcworld.userservice.service;
 
 import com.phcworld.userservice.controller.port.LoginService;
-import com.phcworld.userservice.controller.port.UserResponse;
 import com.phcworld.userservice.domain.User;
 import com.phcworld.userservice.domain.port.LoginRequest;
 import com.phcworld.userservice.exception.model.NotFoundException;
-import com.phcworld.userservice.jwt.TokenProvider;
 import com.phcworld.userservice.jwt.dto.TokenDto;
 import com.phcworld.userservice.security.utils.SecurityUtil;
+import com.phcworld.userservice.service.port.TokenProvider;
 import com.phcworld.userservice.service.port.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

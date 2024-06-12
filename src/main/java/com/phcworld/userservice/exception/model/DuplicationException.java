@@ -6,6 +6,6 @@ public class DuplicationException extends CustomBaseException{
     }
 
     public DuplicationException() {
-        super(ErrorCode.CONFLICT);
+        super(ErrorCode.ALREADY_EXIST);
     }
 }

@@ -1,8 +1,8 @@
 package com.phcworld.userservice.jwt.config;
 
-import com.phcworld.userservice.jwt.TokenProvider;
 import com.phcworld.userservice.jwt.filter.JwtExceptionFilter;
 import com.phcworld.userservice.jwt.filter.JwtFilter;
+import com.phcworld.userservice.service.port.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

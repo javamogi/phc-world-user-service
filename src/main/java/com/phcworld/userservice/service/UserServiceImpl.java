@@ -4,11 +4,12 @@ import com.phcworld.userservice.controller.port.UserService;
 import com.phcworld.userservice.domain.User;
 import com.phcworld.userservice.domain.port.UserRequest;
 import com.phcworld.userservice.exception.model.DuplicationException;
+import com.phcworld.userservice.exception.model.ForbiddenException;
 import com.phcworld.userservice.exception.model.NotFoundException;
-import com.phcworld.userservice.exception.model.UnauthorizedException;
-import com.phcworld.userservice.messagequeue.UserProducer;
+import com.phcworld.userservice.messagequeue.UserProducerImpl;
 import com.phcworld.userservice.security.utils.SecurityUtil;
 import com.phcworld.userservice.service.port.LocalDateTimeHolder;
+import com.phcworld.userservice.service.port.UserProducer;
 import com.phcworld.userservice.service.port.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +53,7 @@ public class UserServiceImpl implements UserService {
 	public User modify(UserRequest requestDto){
 		String userId = SecurityUtil.getCurrentMemberId();
 		if(!userId.equals(requestDto.userId())){
-			throw new UnauthorizedException();
+			throw new ForbiddenException();
 		}
 		User user = userRepository.findByUserId(requestDto.userId())
 				.orElseThrow(NotFoundException::new);
@@ -71,7 +72,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User delete(String userId) {
 		if(!SecurityUtil.matchUserId(userId) && SecurityUtil.matchAdminAuthority()){
-			throw new UnauthorizedException();
+			throw new ForbiddenException();
 		}
 		User user = userRepository.findByUserId(userId)
 				.orElseThrow(NotFoundException::new);

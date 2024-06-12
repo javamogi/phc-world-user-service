@@ -1,10 +1,10 @@
 package com.phcworld.userservice.security.config;
 
-import com.phcworld.userservice.jwt.TokenProvider;
 import com.phcworld.userservice.jwt.config.JwtSecurityConfig;
 import com.phcworld.userservice.jwt.entry.JwtAuthenticationEntryPoint;
 import com.phcworld.userservice.jwt.filter.JwtExceptionFilter;
 import com.phcworld.userservice.jwt.handler.JwtAccessDeniedHandler;
+import com.phcworld.userservice.service.port.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -3,11 +3,12 @@ package com.phcworld.userservice.messagequeue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.phcworld.userservice.domain.User;
-import com.phcworld.userservice.infrastructure.UserEntity;
+import com.phcworld.userservice.exception.model.InternalServerErrorException;
 import com.phcworld.userservice.messagequeue.port.Field;
 import com.phcworld.userservice.messagequeue.port.KafkaUserDto;
 import com.phcworld.userservice.messagequeue.port.Payload;
 import com.phcworld.userservice.messagequeue.port.Schema;
+import com.phcworld.userservice.service.port.UserProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -21,7 +22,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserProducer {
+public class UserProducerImpl implements UserProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper mapper;
 
@@ -47,6 +48,7 @@ public class UserProducer {
             .name("users")
             .build();
 
+    @Override
     public User send(String topic, User user){
         log.info("user : {}", user);
         Payload payload = Payload.builder()
@@ -69,7 +71,7 @@ public class UserProducer {
         try {
             jsonInString = mapper.writeValueAsString(kafkaUserDto);
         } catch (JsonProcessingException e){
-            e.printStackTrace();
+            throw new InternalServerErrorException();
         }
 
         kafkaTemplate.send(topic, jsonInString);
