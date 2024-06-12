@@ -11,7 +11,9 @@ public record UserResponse(
         String name,
         String createDate,
         String profileImage,
-        String userId
+        String userId,
+
+        Boolean isDeleted
 ) {
 
     public static UserResponse of(User user) {
@@ -21,6 +23,7 @@ public record UserResponse(
                 .createDate(LocalDateTimeUtils.getTime(user.getCreateDate()))
                 .profileImage(user.getProfileImageUrl())
                 .userId(user.getUserId())
+                .isDeleted(user.isDeleted())
                 .build();
     }
 }
