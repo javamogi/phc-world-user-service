@@ -57,3 +57,5 @@ jwt:
 kafka:
   broker:
     url: 127.0.0.1:9092
+gateway:
+  ip: 127.0.0.1

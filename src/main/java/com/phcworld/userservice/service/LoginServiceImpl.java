@@ -25,7 +25,6 @@ public class LoginServiceImpl implements LoginService {
 
     private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
-
     private final AuthenticationManager authenticationManager;
 
     @Override
