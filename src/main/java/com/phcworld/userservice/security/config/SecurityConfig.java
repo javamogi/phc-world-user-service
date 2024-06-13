@@ -6,6 +6,7 @@ import com.phcworld.userservice.jwt.filter.JwtExceptionFilter;
 import com.phcworld.userservice.jwt.handler.JwtAccessDeniedHandler;
 import com.phcworld.userservice.jwt.service.CustomAuthenticationProvider;
 import com.phcworld.userservice.service.port.TokenProvider;
+import jakarta.ws.rs.HttpMethod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -73,9 +75,11 @@ public class SecurityConfig {
 //                                        "/users",
 //                                        "/users/login",
 //                                        "/actuator/**").permitAll()
-                                .requestMatchers("/**").permitAll()
-//                                .requestMatchers("/**")
-//                                .hasIpAddress(env.getProperty("gateway.ip"))
+//                                .requestMatchers(new IpAddressMatcher(env.getProperty("gateway.ip"))).permitAll()
+//                                .anyRequest().denyAll()
+                                .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 // enable h2-console
