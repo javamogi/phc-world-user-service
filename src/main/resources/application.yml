@@ -4,18 +4,13 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  rabbitmq:
-    host: 127.0.0.1
-    port: 5672
-    username: guest
-    password: guest
 
   profiles:
-    active: mysql
+    active: prod
 #    include: mail
 
 server:
-  port: 0
+  port: 8080
   servlet:
     encoding:
       charset: UTF-8
@@ -23,36 +18,15 @@ server:
       force: true
       force-response: true
 
-eureka:
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: refresh, health, beans, busrefresh, info, prometheus, metrics
-  tracing:
-    sampling:
-      probability: 1.0
-    propagation:
-      consume: b3
-      produce: b3_multi
-    zipkin:
-      tracing:
-        endpoint: "http://localhost:9411/api/v2/spans"
-
-  logging:
-    pattern:
-      level: "%5p [%X{traceId:-},%X{spanId:-}]"
+logging:
+  level:
+    com.phcworld: debug
+    org.springframework.security: debug
+  pattern:
+    level: "%5p [%X{traceId:-},%X{spanId:-}]"
 
 jwt:
-  secret: c3ByaW5nLXNlY3VyaXR5LWp3dC1waGMtd29ybGQtc2VjcmV0LWtleQ==
+  secret: spring-boot-security-test-secret-key-dev
 
 kafka:
   broker:
