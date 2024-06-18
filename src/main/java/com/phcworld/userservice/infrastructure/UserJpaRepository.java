@@ -12,6 +12,6 @@ public interface UserJpaRepository extends JpaRepository<UserEntity, Long> {
 	Optional<UserEntity> findByEmail(String email);
 	Optional<UserEntity> findByUserId(String userId);
 
-	@Query(nativeQuery = true, value = "SELECT * FROM USERS AS U WHERE U.USER_ID IN (:userIds)")
+	@Query(nativeQuery = true, value = "SELECT * FROM users AS U WHERE U.USER_ID IN (:userIds)")
 	List<UserEntity> findByUserIds(@Param("userIds") List<String> userIds);
 }

@@ -31,7 +31,7 @@ public class UserRepositoryImpl implements UserRepository {
         return userJpaRepository.findByUserIds(userIds)
                 .stream()
                 .map(UserEntity::toModel)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
