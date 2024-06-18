@@ -20,6 +20,8 @@
 *** 
 ### MSA
 ![PHC-WORL_MSA_Architecture_User](https://github.com/javamogi/phc-world-user-service/assets/40781237/3dec0c12-9976-4e9d-97cb-cfd5f893cda4)
+### 아키텍처
+![user-architecture](https://github.com/javamogi/phc-world-user-service/assets/40781237/7e18fc28-b3ac-481d-9009-70c5e13f5870)
 ### Swagger
 ![swagger](https://github.com/javamogi/phc-world-user-service/assets/40781237/59f9594a-eeae-4d60-bc38-fb4717cea456)
 *** 
