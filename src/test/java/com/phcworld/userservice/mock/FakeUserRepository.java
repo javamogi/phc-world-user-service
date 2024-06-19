@@ -55,4 +55,11 @@ public class FakeUserRepository implements UserRepository {
             return user;
         }
     }
+
+    @Override
+    public List<User> findByName(String name) {
+        return data.stream()
+                .filter(user -> user.getName().equals(name))
+                .toList();
+    }
 }

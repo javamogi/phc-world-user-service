@@ -87,7 +87,7 @@ class UserApiControllerTest {
     }
 
     @Test
-    @DisplayName("요청 회원정보 가져오기")
+    @DisplayName("회원 아이디로 회원정보 가져오기")
     void getUserInfo(){
         // given
         LocalDateTime time = LocalDateTime.of(2024, 3, 13, 11, 11, 11, 111111);
@@ -422,4 +422,40 @@ class UserApiControllerTest {
                 .containsKey("2222");
     }
 
+    @Test
+    @DisplayName("회원 이름으로 회원정보 가져오기")
+    void getUserByName(){
+        // given
+        LocalDateTime time = LocalDateTime.of(2024, 3, 13, 11, 11, 11, 111111);
+        TestContainer testContainer = TestContainer.builder()
+                .localDateTimeHolder(new FakeLocalDateTimeHolder(time))
+                .build();
+        testContainer.userRepository.save(User.builder()
+                .id(1L)
+                .email("test@test.test")
+                .name("테스트")
+                .userId("1111")
+                .password("test")
+                .isDeleted(false)
+                .authority(Authority.ROLE_USER)
+                .profileImage("blank-profile-picture.png")
+                .createDate(time)
+                .build());
+        Authentication authentication = new FakeAuthentication("1111", "test", Authority.ROLE_USER).getAuthentication();
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // when
+        ResponseEntity<List<UserResponse>> result = testContainer.userApiController.getUsersByName("테스트");
+
+        // then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
+        assertThat(result.getBody()).isNotNull();
+        assertThat(result.getBody()).hasSize(1);
+        assertThat(result.getBody().get(0).userId()).isEqualTo("1111");
+        assertThat(result.getBody().get(0).email()).isEqualTo("test@test.test");
+        assertThat(result.getBody().get(0).name()).isEqualTo("테스트");
+        assertThat(result.getBody().get(0).createDate()).isEqualTo(LocalDateTimeUtils.getTime(time));
+        assertThat(result.getBody().get(0).profileImage())
+                .isEqualTo("http://localhost:8080/image/" + "blank-profile-picture.png");
+    }
 }

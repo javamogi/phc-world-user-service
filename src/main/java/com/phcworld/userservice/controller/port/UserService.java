@@ -8,8 +8,10 @@ import java.util.Map;
 
 public interface UserService {
     User register(UserRequest request);
-    User getUser(String userId);
+    User getUserByUserId(String userId);
     User modify(UserRequest request);
     User delete(String userId);
     Map<String, User> getUsers(List<String> userIds);
+
+    List<User> getUserByName(String name);
 }

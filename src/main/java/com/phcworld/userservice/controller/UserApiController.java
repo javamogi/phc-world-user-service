@@ -55,7 +55,7 @@ public class UserApiController {
     })
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponse> getUserInfo(@PathVariable(name = "userId") String userId){
-        User user = userService.getUser(userId);
+        User user = userService.getUserByUserId(userId);
         return ResponseEntity
                 .ok()
                 .body(UserResponse.of(user));
@@ -96,5 +96,16 @@ public class UserApiController {
         return ResponseEntity
                 .ok()
                 .body(users);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserResponse>> getUsersByName(@RequestParam(name = "name") String name){
+        List<User> users = userService.getUserByName(name);
+        List<UserResponse> responses = users.stream()
+                .map(UserResponse::of)
+                .toList();
+        return ResponseEntity
+                .ok()
+                .body(responses);
     }
 }

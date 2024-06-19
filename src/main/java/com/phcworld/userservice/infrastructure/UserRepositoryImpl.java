@@ -38,4 +38,12 @@ public class UserRepositoryImpl implements UserRepository {
     public User save(User user) {
         return userJpaRepository.save(UserEntity.from(user)).toModel();
     }
+
+    @Override
+    public List<User> findByName(String name) {
+        return userJpaRepository.findByName(name)
+                .stream()
+                .map(UserEntity::toModel)
+                .toList();
+    }
 }

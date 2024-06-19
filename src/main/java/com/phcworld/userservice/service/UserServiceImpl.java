@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User getUser(String userId){
+	public User getUserByUserId(String userId){
 		return userRepository.findByUserId(userId)
 				.orElseThrow(NotFoundException::new);
 	}
@@ -96,5 +96,10 @@ public class UserServiceImpl implements UserService {
 								Function.identity()
 						)
 				);
+	}
+
+	@Override
+	public List<User> getUserByName(String name) {
+		return userRepository.findByName(name);
 	}
 }

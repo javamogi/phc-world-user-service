@@ -126,7 +126,7 @@ class UserServiceImplTest {
         String userId = "1111";
 
         // when
-        User result = userService.getUser(userId);
+        User result = userService.getUserByUserId(userId);
 
         // then
         assertThat(result.getUserId()).isEqualTo("1111");
@@ -143,7 +143,7 @@ class UserServiceImplTest {
         // when
         // then
         Assertions.assertThrows(NotFoundException.class, () -> {
-            userService.getUser(userId);
+            userService.getUserByUserId(userId);
         });
     }
 
@@ -309,6 +309,21 @@ class UserServiceImplTest {
         assertThat(result).hasSize(2)
                 .containsKey("1111")
                 .containsKey("2222");
+    }
+
+    @Test
+    @DisplayName("이름으로 회원정보 가져오기")
+    void getUserByName(){
+        // given
+        String name = "테스트";
+
+        // when
+        List<User> result = userService.getUserByName(name);
+
+        // then
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getEmail()).isEqualTo("test@test.test");
+        assertThat(result.get(0).getName()).isEqualTo("테스트");
     }
 
 }
