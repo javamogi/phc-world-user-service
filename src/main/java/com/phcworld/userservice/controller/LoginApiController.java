@@ -2,8 +2,8 @@ package com.phcworld.userservice.controller;
 
 import com.phcworld.userservice.controller.port.LoginService;
 import com.phcworld.userservice.domain.User;
-import com.phcworld.userservice.domain.port.LoginRequest;
-import com.phcworld.userservice.controller.port.UserResponse;
+import com.phcworld.userservice.domain.LoginRequest;
+import com.phcworld.userservice.controller.response.UserResponse;
 import com.phcworld.userservice.jwt.dto.TokenDto;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

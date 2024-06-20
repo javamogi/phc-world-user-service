@@ -1,16 +1,10 @@
 package com.phcworld.userservice.security.utils;
 
 import com.phcworld.userservice.domain.Authority;
-import com.phcworld.userservice.domain.port.LoginRequest;
-import com.phcworld.userservice.jwt.service.CustomAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.stream.Collectors;
 

@@ -2,7 +2,7 @@ package com.phcworld.userservice.service;
 
 import com.phcworld.userservice.controller.port.UserService;
 import com.phcworld.userservice.domain.User;
-import com.phcworld.userservice.domain.port.UserRequest;
+import com.phcworld.userservice.domain.UserRequest;
 import com.phcworld.userservice.exception.model.DuplicationException;
 import com.phcworld.userservice.exception.model.ForbiddenException;
 import com.phcworld.userservice.exception.model.NotFoundException;

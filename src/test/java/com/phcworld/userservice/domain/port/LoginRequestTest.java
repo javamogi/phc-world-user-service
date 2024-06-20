@@ -1,6 +1,6 @@
 package com.phcworld.userservice.domain.port;
 
-import com.phcworld.userservice.domain.port.LoginRequest;
+import com.phcworld.userservice.domain.LoginRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

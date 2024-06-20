@@ -1,6 +1,5 @@
 package com.phcworld.userservice.domain;
 
-import com.phcworld.userservice.domain.port.UserRequest;
 import com.phcworld.userservice.exception.model.DeletedEntityException;
 import com.phcworld.userservice.service.port.LocalDateTimeHolder;
 import com.phcworld.userservice.service.port.UuidHolder;
@@ -10,7 +9,6 @@ import lombok.Getter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Builder

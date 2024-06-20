@@ -1,7 +1,6 @@
-package com.phcworld.userservice.controller.port;
+package com.phcworld.userservice.controller.response;
 
 import com.phcworld.userservice.domain.User;
-import com.phcworld.userservice.infrastructure.UserEntity;
 import com.phcworld.userservice.utils.LocalDateTimeUtils;
 import lombok.Builder;
 
