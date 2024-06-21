@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ public class UserServiceImpl implements UserService {
 	private final UuidHolder uuidHolder;
 
 	@Override
+	@Transactional
 	public User register(UserRequest requestUser) {
 		userRepository.findByEmail(requestUser.email())
 				.ifPresent(user -> {
@@ -51,12 +53,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public User getUserByUserId(String userId){
 		return userRepository.findByUserId(userId)
 				.orElseThrow(NotFoundException::new);
 	}
 
 	@Override
+	@Transactional
 	public User modify(UserRequest requestDto){
 		String userId = SecurityUtil.getCurrentMemberId();
 		if(!userId.equals(requestDto.userId())){
@@ -77,6 +81,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public User delete(String userId) {
 		if(!SecurityUtil.matchUserId(userId) && SecurityUtil.matchAdminAuthority()){
 			throw new ForbiddenException();
@@ -88,6 +93,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Map<String, User> getUsers(List<String> userIds){
 		return userRepository.findByUserIds(userIds)
 				.stream()
@@ -99,6 +105,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<User> getUserByName(String name) {
 		return userRepository.findByName(name);
 	}

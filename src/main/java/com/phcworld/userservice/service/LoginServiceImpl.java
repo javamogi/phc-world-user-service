@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ public class LoginServiceImpl implements LoginService {
     private final AuthenticationManager authenticationManager;
 
     @Override
+    @Transactional(readOnly = true)
     public TokenDto login(LoginRequest request) {
         // 비밀번호 확인 + spring security 객체 생성 후 JWT 토큰 생성
         Authentication authentication
@@ -40,12 +42,14 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TokenDto getNewToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return tokenProvider.generateTokenDto(authentication);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getLoginUserInfo(){
         String userId = SecurityUtil.getCurrentMemberId();
         return userRepository.findByUserId(userId)
