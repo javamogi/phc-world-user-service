@@ -1,15 +1,18 @@
 spring:
-  application:
-    name: user-api-service
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
-  rabbitmq:
-    host: 127.0.0.1
-    port: 5672
-    username: guest
-    password: guest
+  cloud:
+    bus:
+      enabled: false
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2-console
+#      settings:
+#        web-allow-others: true
   datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/test?rewriteBatchedStatements=true&profileSQL=true&logger=Slf4JLogger&maxQuerySizeToLog=999999&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+#    username: root
+#    password: root
     master:
       jdbc-url: jdbc:mysql://localhost:3306/test?rewriteBatchedStatements=true&profileSQL=true&logger=Slf4JLogger&maxQuerySizeToLog=999999&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
       username: root
@@ -29,35 +32,14 @@ spring:
       hibernate.default_batch_fetch_size: 1000
       hibernate:
         format_sql: true
-server:
-  port: 0
-  servlet:
-    encoding:
-      charset: UTF-8
-      force-request: true
-      force: true
-      force-response: true
+
+file:
+  path: src/main/resources/static/image/
 
 eureka:
   client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-
+    enabled: false
 management:
-  endpoints:
-    web:
-      exposure:
-        include: refresh, health, beans, busrefresh, info, prometheus, metrics
-  tracing:
-    sampling:
-      probability: 1.0
-    propagation:
-      consume: b3
-      produce: b3_multi
-    zipkin:
-      tracing:
-        endpoint: "http://localhost:9411/api/v2/spans"
+  health:
+    rabbit:
+      enabled: false

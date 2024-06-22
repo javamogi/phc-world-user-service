@@ -1,7 +1,7 @@
 package com.phcworld.userservice.controller.port;
 
 import com.phcworld.userservice.domain.User;
-import com.phcworld.userservice.domain.port.UserRequest;
+import com.phcworld.userservice.domain.UserRequest;
 
 import java.util.List;
 import java.util.Map;

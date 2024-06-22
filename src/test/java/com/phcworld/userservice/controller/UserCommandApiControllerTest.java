@@ -1,9 +1,9 @@
 package com.phcworld.userservice.controller;
 
-import com.phcworld.userservice.controller.port.UserResponse;
+import com.phcworld.userservice.controller.response.UserResponse;
 import com.phcworld.userservice.domain.Authority;
 import com.phcworld.userservice.domain.User;
-import com.phcworld.userservice.domain.port.UserRequest;
+import com.phcworld.userservice.domain.UserRequest;
 import com.phcworld.userservice.exception.model.*;
 import com.phcworld.userservice.mock.FakeAuthentication;
 import com.phcworld.userservice.mock.FakeLocalDateTimeHolder;
@@ -24,7 +24,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserApiControllerTest {
+class UserCommandApiControllerTest {
 
     @Test
     @DisplayName("사용자는_회원가입을_할_수_있고_사용자의_권한은_ROLE_USER_이다")
@@ -42,7 +42,7 @@ class UserApiControllerTest {
                 .build();
 
         // when
-        ResponseEntity<UserResponse> result = testContainer.userApiController.create(requestDto);
+        ResponseEntity<UserResponse> result = testContainer.userCommandApiController.create(requestDto);
 
         // then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(201));
@@ -82,57 +82,7 @@ class UserApiControllerTest {
         // when
         // then
         Assertions.assertThrows(DuplicationException.class, () -> {
-            testContainer.userApiController.create(requestDto);
-        });
-    }
-
-    @Test
-    @DisplayName("회원 아이디로 회원정보 가져오기")
-    void getUserInfo(){
-        // given
-        LocalDateTime time = LocalDateTime.of(2024, 3, 13, 11, 11, 11, 111111);
-        TestContainer testContainer = TestContainer.builder()
-                .localDateTimeHolder(new FakeLocalDateTimeHolder(time))
-                .build();
-        testContainer.userRepository.save(User.builder()
-                .id(1L)
-                .email("test@test.test")
-                .name("테스트")
-                .userId("1111")
-                .password("test")
-                .isDeleted(false)
-                .authority(Authority.ROLE_USER)
-                .profileImage("blank-profile-picture.png")
-                .createDate(time)
-                .build());
-        Authentication authentication = new FakeAuthentication("1111", "test", Authority.ROLE_USER).getAuthentication();
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // when
-        ResponseEntity<UserResponse> result = testContainer.userApiController.getUserInfo("1111");
-
-        // then
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
-        assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody().userId()).isEqualTo("1111");
-        assertThat(result.getBody().email()).isEqualTo("test@test.test");
-        assertThat(result.getBody().name()).isEqualTo("테스트");
-        assertThat(result.getBody().createDate()).isEqualTo(LocalDateTimeUtils.getTime(time));
-        assertThat(result.getBody().profileImage())
-                .isEqualTo("http://localhost:8080/image/" + "blank-profile-picture.png");
-    }
-
-    @Test
-    @DisplayName("회원 정보 요청 실패 가입하지 않은 회원")
-    void failedGetUserInfo(){
-        // given
-        TestContainer testContainer = TestContainer.builder()
-                .build();
-
-        // when
-        // then
-        Assertions.assertThrows(NotFoundException.class, () -> {
-            testContainer.userApiController.getUserInfo("1111");
+            testContainer.userCommandApiController.create(requestDto);
         });
     }
 
@@ -166,7 +116,7 @@ class UserApiControllerTest {
                 .build();
 
         // when
-        ResponseEntity<UserResponse> result = testContainer.userApiController.updateUser(requestDto);
+        ResponseEntity<UserResponse> result = testContainer.userCommandApiController.updateUser(requestDto);
 
         // then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
@@ -197,7 +147,7 @@ class UserApiControllerTest {
         // when
         // then
         Assertions.assertThrows(ForbiddenException.class, () -> {
-            testContainer.userApiController.updateUser(requestDto);
+            testContainer.userCommandApiController.updateUser(requestDto);
         });
     }
 
@@ -219,7 +169,7 @@ class UserApiControllerTest {
         // when
         // then
         Assertions.assertThrows(NotFoundException.class, () -> {
-            testContainer.userApiController.updateUser(requestDto);
+            testContainer.userCommandApiController.updateUser(requestDto);
         });
     }
 
@@ -247,7 +197,7 @@ class UserApiControllerTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // when
-        ResponseEntity<UserResponse> result = testContainer.userApiController.deleteUser("1111");
+        ResponseEntity<UserResponse> result = testContainer.userCommandApiController.deleteUser("1111");
 
         // then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
@@ -297,7 +247,7 @@ class UserApiControllerTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // when
-        ResponseEntity<UserResponse> result = testContainer.userApiController.deleteUser("2222");
+        ResponseEntity<UserResponse> result = testContainer.userCommandApiController.deleteUser("2222");
 
         // then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
@@ -320,7 +270,7 @@ class UserApiControllerTest {
         // when
         // then
         Assertions.assertThrows(ForbiddenException.class, () -> {
-            testContainer.userApiController.deleteUser("1111");
+            testContainer.userCommandApiController.deleteUser("1111");
         });
     }
 
@@ -336,7 +286,7 @@ class UserApiControllerTest {
         // when
         // then
         Assertions.assertThrows(NotFoundException.class, () -> {
-            testContainer.userApiController.deleteUser("1111");
+            testContainer.userCommandApiController.deleteUser("1111");
         });
     }
 
@@ -366,96 +316,8 @@ class UserApiControllerTest {
         // when
         // then
         Assertions.assertThrows(DeletedEntityException.class, () -> {
-            testContainer.userApiController.deleteUser("1111");
+            testContainer.userCommandApiController.deleteUser("1111");
         });
     }
 
-    @Test
-    @DisplayName("요청 회원 목록")
-    void getListByList(){
-        LocalDateTime time = LocalDateTime.of(2024, 3, 13, 11, 11, 11, 111111);
-        TestContainer testContainer = TestContainer.builder()
-                .localDateTimeHolder(new FakeLocalDateTimeHolder(time))
-                .build();
-        User user = User.builder()
-                .id(1L)
-                .email("test@test.test")
-                .name("테스트")
-                .userId("1111")
-                .password("test")
-                .isDeleted(false)
-                .authority(Authority.ROLE_ADMIN)
-                .profileImage("blank-profile-picture.png")
-                .createDate(time)
-                .updateDate(time)
-                .build();
-        User user2 = User.builder()
-                .id(2L)
-                .email("test2@test.test")
-                .name("테스트2")
-                .userId("2222")
-                .password("test2")
-                .isDeleted(false)
-                .authority(Authority.ROLE_USER)
-                .profileImage("blank-profile-picture.png")
-                .createDate(time)
-                .updateDate(time)
-                .build();
-        testContainer.userRepository.save(user);
-        testContainer.userRepository.save(user2);
-
-        List<String> userIds = new ArrayList<>();
-        userIds.add("1111");
-        userIds.add("2222");
-
-        Authentication authentication = new FakeAuthentication("1111", "test", Authority.ROLE_ADMIN).getAuthentication();
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // when
-        ResponseEntity<Map<String, UserResponse>> result = testContainer.userApiController.getUsers(userIds);
-
-        // then
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
-        assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody()).hasSize(2)
-                .containsKey("1111")
-                .containsKey("2222");
-    }
-
-    @Test
-    @DisplayName("회원 이름으로 회원정보 가져오기")
-    void getUserByName(){
-        // given
-        LocalDateTime time = LocalDateTime.of(2024, 3, 13, 11, 11, 11, 111111);
-        TestContainer testContainer = TestContainer.builder()
-                .localDateTimeHolder(new FakeLocalDateTimeHolder(time))
-                .build();
-        testContainer.userRepository.save(User.builder()
-                .id(1L)
-                .email("test@test.test")
-                .name("테스트")
-                .userId("1111")
-                .password("test")
-                .isDeleted(false)
-                .authority(Authority.ROLE_USER)
-                .profileImage("blank-profile-picture.png")
-                .createDate(time)
-                .build());
-        Authentication authentication = new FakeAuthentication("1111", "test", Authority.ROLE_USER).getAuthentication();
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // when
-        ResponseEntity<List<UserResponse>> result = testContainer.userApiController.getUsersByName("테스트");
-
-        // then
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
-        assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody()).hasSize(1);
-        assertThat(result.getBody().get(0).userId()).isEqualTo("1111");
-        assertThat(result.getBody().get(0).email()).isEqualTo("test@test.test");
-        assertThat(result.getBody().get(0).name()).isEqualTo("테스트");
-        assertThat(result.getBody().get(0).createDate()).isEqualTo(LocalDateTimeUtils.getTime(time));
-        assertThat(result.getBody().get(0).profileImage())
-                .isEqualTo("http://localhost:8080/image/" + "blank-profile-picture.png");
-    }
 }

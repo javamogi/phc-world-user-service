@@ -2,7 +2,7 @@ package com.phcworld.userservice.service;
 
 import com.phcworld.userservice.controller.port.LoginService;
 import com.phcworld.userservice.domain.User;
-import com.phcworld.userservice.domain.port.LoginRequest;
+import com.phcworld.userservice.domain.LoginRequest;
 import com.phcworld.userservice.exception.model.NotFoundException;
 import com.phcworld.userservice.jwt.dto.TokenDto;
 import com.phcworld.userservice.security.utils.SecurityUtil;
@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ public class LoginServiceImpl implements LoginService {
     private final AuthenticationManager authenticationManager;
 
     @Override
+    @Transactional(readOnly = true)
     public TokenDto login(LoginRequest request) {
         // 비밀번호 확인 + spring security 객체 생성 후 JWT 토큰 생성
         Authentication authentication
@@ -40,12 +42,14 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TokenDto getNewToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return tokenProvider.generateTokenDto(authentication);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getLoginUserInfo(){
         String userId = SecurityUtil.getCurrentMemberId();
         return userRepository.findByUserId(userId)

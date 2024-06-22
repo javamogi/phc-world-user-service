@@ -1,6 +1,6 @@
 package com.phcworld.userservice.domain.port;
 
-import com.phcworld.userservice.domain.User;
+import com.phcworld.userservice.domain.UserRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserRequestTest {
 

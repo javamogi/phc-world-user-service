@@ -2,7 +2,7 @@ package com.phcworld.userservice.controller;
 
 import com.phcworld.userservice.domain.Authority;
 import com.phcworld.userservice.domain.User;
-import com.phcworld.userservice.domain.port.LoginRequest;
+import com.phcworld.userservice.domain.LoginRequest;
 import com.phcworld.userservice.exception.model.DeletedEntityException;
 import com.phcworld.userservice.exception.model.NotFoundException;
 import com.phcworld.userservice.exception.model.UnauthorizedException;
@@ -14,8 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 

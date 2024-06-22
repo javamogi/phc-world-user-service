@@ -1,7 +1,8 @@
 package com.phcworld.userservice.mock;
 
 import com.phcworld.userservice.controller.LoginApiController;
-import com.phcworld.userservice.controller.UserApiController;
+import com.phcworld.userservice.controller.UserCommandApiController;
+import com.phcworld.userservice.controller.UserQueryApiController;
 import com.phcworld.userservice.controller.port.LoginService;
 import com.phcworld.userservice.jwt.service.CustomUserDetailsService;
 import com.phcworld.userservice.service.LoginServiceImpl;
@@ -13,7 +14,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class TestContainer {
-    public final UserApiController userApiController;
+    public final UserQueryApiController userQueryApiController;
+
+    public final UserCommandApiController userCommandApiController;
 
     public final LoginService loginService;
 
@@ -49,7 +52,10 @@ public class TestContainer {
                 .uuidHolder(uuidHolder)
                 .userProducer(userProducer)
                 .build();
-        this.userApiController = UserApiController.builder()
+        this.userQueryApiController = UserQueryApiController.builder()
+                .userService(userService)
+                .build();
+        this.userCommandApiController = UserCommandApiController.builder()
                 .userService(userService)
                 .build();
         this.loginService = LoginServiceImpl.builder()

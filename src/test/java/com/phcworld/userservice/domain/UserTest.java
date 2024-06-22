@@ -1,6 +1,5 @@
 package com.phcworld.userservice.domain;
 
-import com.phcworld.userservice.domain.port.UserRequest;
 import com.phcworld.userservice.mock.FakeLocalDateTimeHolder;
 import com.phcworld.userservice.mock.FakePasswordEncode;
 import com.phcworld.userservice.mock.TestUuidHolder;

@@ -9,10 +9,16 @@ spring:
       settings:
         web-allow-others: true
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:userdb
-    username: sa
-    password:
+    master:
+      jdbc-url: jdbc:h2:mem:masterdb
+      driver-class-name: org.h2.Driver
+      username: sa
+      password:
+    slave:
+      jdbc-url: jdbc:h2:mem:slavedb
+      driver-class-name: org.h2.Driver
+      username: sa
+      password:
 
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect

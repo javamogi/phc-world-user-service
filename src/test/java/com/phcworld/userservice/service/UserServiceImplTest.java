@@ -2,7 +2,7 @@ package com.phcworld.userservice.service;
 
 import com.phcworld.userservice.domain.Authority;
 import com.phcworld.userservice.domain.User;
-import com.phcworld.userservice.domain.port.UserRequest;
+import com.phcworld.userservice.domain.UserRequest;
 import com.phcworld.userservice.exception.model.*;
 import com.phcworld.userservice.mock.*;
 import org.junit.jupiter.api.Assertions;
