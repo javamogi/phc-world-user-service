@@ -4,13 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.phcworld.userservice.domain.User;
 import com.phcworld.userservice.exception.model.InternalServerErrorException;
-import com.phcworld.userservice.messagequeue.port.Field;
-import com.phcworld.userservice.messagequeue.port.KafkaUserDto;
-import com.phcworld.userservice.messagequeue.port.Payload;
-import com.phcworld.userservice.messagequeue.port.Schema;
+import com.phcworld.userservice.messagequeue.dto.*;
 import com.phcworld.userservice.service.port.UserProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -74,6 +72,10 @@ public class UserProducerImpl implements UserProducer {
             throw new InternalServerErrorException();
         }
 
+//        ProducerRecord<String, String> record = new ProducerRecord<>(topic, user.getEmail(), jsonInString);
+
+//        kafkaTemplate.send(record);
+//        log.info("User Producer sent data from the User microservice: {}", record);
         kafkaTemplate.send(topic, jsonInString);
         log.info("User Producer sent data from the User microservice: {}", kafkaUserDto);
 
