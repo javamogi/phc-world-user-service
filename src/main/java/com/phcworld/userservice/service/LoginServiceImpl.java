@@ -11,6 +11,7 @@ import com.phcworld.userservice.service.port.UserRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 @Builder
 public class LoginServiceImpl implements LoginService {
@@ -27,6 +27,15 @@ public class LoginServiceImpl implements LoginService {
     private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
+
+    public LoginServiceImpl(TokenProvider tokenProvider,
+//                            @Qualifier("jpaUserRepository") UserRepository userRepository,
+                            @Qualifier("redisUserRepository") UserRepository userRepository,
+                            AuthenticationManager authenticationManager) {
+        this.tokenProvider = tokenProvider;
+        this.userRepository = userRepository;
+        this.authenticationManager = authenticationManager;
+    }
 
     @Override
     @Transactional(readOnly = true)

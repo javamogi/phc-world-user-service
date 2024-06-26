@@ -14,6 +14,7 @@ import com.phcworld.userservice.service.port.UuidHolder;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 @Builder
 public class UserServiceImpl implements UserService {
@@ -35,6 +35,19 @@ public class UserServiceImpl implements UserService {
 	private final UserProducer userProducer;
 	private final LocalDateTimeHolder localDateTimeHolder;
 	private final UuidHolder uuidHolder;
+
+//	public UserServiceImpl(@Qualifier("jpaUserRepository") UserRepository userRepository,
+	public UserServiceImpl(@Qualifier("redisUserRepository") UserRepository userRepository,
+						   PasswordEncoder passwordEncoder,
+						   UserProducer userProducer,
+						   LocalDateTimeHolder localDateTimeHolder,
+						   UuidHolder uuidHolder) {
+		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
+		this.userProducer = userProducer;
+		this.localDateTimeHolder = localDateTimeHolder;
+		this.uuidHolder = uuidHolder;
+	}
 
 	@Override
 	@Transactional
@@ -49,6 +62,7 @@ public class UserServiceImpl implements UserService {
 				localDateTimeHolder,
 				uuidHolder);
 //		return userRepository.save(user);
+		userRepository.save(user);
 		return userProducer.send("users", user);
 	}
 
@@ -77,6 +91,7 @@ public class UserServiceImpl implements UserService {
 //					FileType.USER_PROFILE_IMG);
 		}
 		user = user.modify(requestDto, profileImg, passwordEncoder, localDateTimeHolder);
+		userRepository.save(user);
 		return userProducer.send("users", user);
 	}
 
@@ -89,6 +104,7 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByUserId(userId)
 				.orElseThrow(NotFoundException::new);
 		user = user.delete();
+		userRepository.save(user);
 		return userProducer.send("users", user);
 	}
 

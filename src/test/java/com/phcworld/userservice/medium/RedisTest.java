@@ -3,17 +3,14 @@ package com.phcworld.userservice.medium;
 import com.phcworld.userservice.domain.Authority;
 import com.phcworld.userservice.domain.User;
 import com.phcworld.userservice.exception.model.NotFoundException;
-import com.phcworld.userservice.infrastructure.UserRedisEntity;
-import com.phcworld.userservice.infrastructure.UserRedisRepositoryImpl;
+import com.phcworld.userservice.service.port.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.StopWatch;
 
@@ -30,7 +27,8 @@ import static org.assertj.core.api.Assertions.*;
 class RedisTest {
 
     @Autowired
-    UserRedisRepositoryImpl userRedisRepository;
+    @Qualifier("redisUserRepository")
+    UserRepository userRepository;
 
     LocalDateTime createDate = LocalDateTime.of(2024, 3, 13, 11, 11, 11, 111111);
 
@@ -48,7 +46,7 @@ class RedisTest {
                 .createDate(createDate)
                 .updateDate(LocalDateTime.now())
                 .build();
-        userRedisRepository.save(user);
+        userRepository.save(user);
 
         User user2 = User.builder()
                 .id(2L)
@@ -62,7 +60,7 @@ class RedisTest {
                 .createDate(createDate)
                 .updateDate(LocalDateTime.now())
                 .build();
-        userRedisRepository.save(user2);
+        userRepository.save(user2);
     }
 
     @Test
@@ -80,11 +78,11 @@ class RedisTest {
                 .createDate(createDate)
                 .updateDate(LocalDateTime.now())
                 .build();
-        userRedisRepository.save(user3);
+        userRepository.save(user3);
 
         StopWatch queryStopWatch = new StopWatch();
         queryStopWatch.start();
-        Optional<UserRedisEntity> findUser = userRedisRepository.findByUserId("3333");
+        Optional<User> findUser = userRepository.findByUserId("3333");
         queryStopWatch.stop();
         log.info("findByUserId 조회 시간 : {}", queryStopWatch.getTotalTimeSeconds());
 
@@ -92,10 +90,9 @@ class RedisTest {
         assertThat(findUser.get().getUserId()).isEqualTo("3333");
         assertThat(findUser.get().getEmail()).isEqualTo("test3@test.test");
         assertThat(findUser.get().getName()).isEqualTo("테스트3");
-        assertThat(findUser.get().getCreateDate())
-                .isEqualTo(createDate.withNano(0)
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")));
+        assertThat(findUser.get().getCreateDate()).isEqualTo(createDate);
         assertThat(findUser.get().getProfileImage()).isEqualTo("blank-profile-picture.png");
+        assertThat(findUser.get().getAuthority()).isEqualTo(Authority.ROLE_USER);
     }
 
     @Test
@@ -103,7 +100,7 @@ class RedisTest {
     void findByUserId() {
         StopWatch queryStopWatch = new StopWatch();
         queryStopWatch.start();
-        Optional<UserRedisEntity> findUser = userRedisRepository.findByUserId("1111");
+        Optional<User> findUser = userRepository.findByUserId("1111");
         queryStopWatch.stop();
         log.info("findByUserId 조회 시간 : {}", queryStopWatch.getTotalTimeSeconds());
 
@@ -111,10 +108,9 @@ class RedisTest {
         assertThat(findUser.get().getUserId()).isEqualTo("1111");
         assertThat(findUser.get().getEmail()).isEqualTo("test@test.test");
         assertThat(findUser.get().getName()).isEqualTo("테스트");
-        assertThat(findUser.get().getCreateDate())
-                .isEqualTo(createDate.withNano(0)
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")));
+        assertThat(findUser.get().getCreateDate()).isEqualTo(createDate);
         assertThat(findUser.get().getProfileImage()).isEqualTo("blank-profile-picture.png");
+        assertThat(findUser.get().getAuthority()).isEqualTo(Authority.ROLE_USER);
     }
 
     @Test
@@ -122,7 +118,7 @@ class RedisTest {
     void findByEmptyUserId() {
         StopWatch queryStopWatch = new StopWatch();
         queryStopWatch.start();
-        Optional<UserRedisEntity> findUser = userRedisRepository.findByUserId("9999");
+        Optional<User> findUser = userRepository.findByUserId("9999");
         queryStopWatch.stop();
         log.info("findByUserId 조회 시간 : {}", queryStopWatch.getTotalTimeSeconds());
 
@@ -134,7 +130,7 @@ class RedisTest {
     void findByName() {
         StopWatch queryStopWatch = new StopWatch();
         queryStopWatch.start();
-        List<UserRedisEntity> findUser = userRedisRepository.findByName("테스트");
+        List<User> findUser = userRepository.findByName("테스트");
         queryStopWatch.stop();
         log.info("findByUserId 조회 시간 : {}", queryStopWatch.getTotalTimeSeconds());
 
@@ -142,10 +138,9 @@ class RedisTest {
         assertThat(findUser.get(0).getUserId()).isEqualTo("1111");
         assertThat(findUser.get(0).getEmail()).isEqualTo("test@test.test");
         assertThat(findUser.get(0).getName()).isEqualTo("테스트");
-        assertThat(findUser.get(0).getCreateDate())
-                .isEqualTo(createDate.withNano(0)
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")));
+        assertThat(findUser.get(0).getCreateDate()).isEqualTo(createDate);
         assertThat(findUser.get(0).getProfileImage()).isEqualTo("blank-profile-picture.png");
+        assertThat(findUser.get(0).getAuthority()).isEqualTo(Authority.ROLE_USER);
     }
 
     @Test
@@ -153,7 +148,7 @@ class RedisTest {
     void findByNameWhenNotFound() {
         StopWatch queryStopWatch = new StopWatch();
         queryStopWatch.start();
-        List<UserRedisEntity> findUser = userRedisRepository.findByName("등록되지않는이름");
+        List<User> findUser = userRepository.findByName("등록되지않는이름");
         queryStopWatch.stop();
         log.info("findByUserId 조회 시간 : {}", queryStopWatch.getTotalTimeSeconds());
 
@@ -165,7 +160,7 @@ class RedisTest {
     void findByEmail() {
         StopWatch queryStopWatch = new StopWatch();
         queryStopWatch.start();
-        Optional<UserRedisEntity> findUser = userRedisRepository.findByEmail("test@test.test");
+        Optional<User> findUser = userRepository.findByEmail("test@test.test");
         queryStopWatch.stop();
         log.info("findByUserId 조회 시간 : {}", queryStopWatch.getTotalTimeSeconds());
 
@@ -173,17 +168,21 @@ class RedisTest {
         assertThat(findUser.get().getUserId()).isEqualTo("1111");
         assertThat(findUser.get().getEmail()).isEqualTo("test@test.test");
         assertThat(findUser.get().getName()).isEqualTo("테스트");
-        assertThat(findUser.get().getCreateDate())
-                .isEqualTo(createDate.withNano(0)
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")));
+        assertThat(findUser.get().getCreateDate()).isEqualTo(createDate);
         assertThat(findUser.get().getProfileImage()).isEqualTo("blank-profile-picture.png");
+        assertThat(findUser.get().getAuthority()).isEqualTo(Authority.ROLE_USER);
     }
 
     @Test
     @DisplayName("등록되지 않은 회원 이메일로 정보를 조회할 수 없다.")
     void findByEmailWhenNotFound() {
-        assertThatThrownBy(() -> userRedisRepository.findByEmail("empty@test.test"))
-                .isInstanceOf(NotFoundException.class);
+        StopWatch queryStopWatch = new StopWatch();
+        queryStopWatch.start();
+        Optional<User> findUser = userRepository.findByEmail("9999@test.test");
+        queryStopWatch.stop();
+        log.info("findByUserId 조회 시간 : {}", queryStopWatch.getTotalTimeSeconds());
+
+        assertThat(findUser).isEmpty();
     }
 
     @Test
@@ -192,7 +191,7 @@ class RedisTest {
         List<String> list = List.of("1111","2222");
         StopWatch queryStopWatch = new StopWatch();
         queryStopWatch.start();
-        List<UserRedisEntity> findUser = userRedisRepository.findByUserIds(list);
+        List<User> findUser = userRepository.findByUserIds(list);
         queryStopWatch.stop();
         log.info("findByUserId 조회 시간 : {}", queryStopWatch.getTotalTimeSeconds());
 
@@ -205,7 +204,7 @@ class RedisTest {
         List<String> list = List.of("0000","9999");
         StopWatch queryStopWatch = new StopWatch();
         queryStopWatch.start();
-        List<UserRedisEntity> findUser = userRedisRepository.findByUserIds(list);
+        List<User> findUser = userRepository.findByUserIds(list);
         queryStopWatch.stop();
         log.info("findByUserId 조회 시간 : {}", queryStopWatch.getTotalTimeSeconds());
 
