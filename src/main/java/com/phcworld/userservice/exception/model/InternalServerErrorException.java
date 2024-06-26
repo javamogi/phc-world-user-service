@@ -8,4 +8,5 @@ public class InternalServerErrorException extends CustomBaseException{
     public InternalServerErrorException(){
         super(ErrorCode.INTERNAL_SERVER_ERROR);
     }
+
 }

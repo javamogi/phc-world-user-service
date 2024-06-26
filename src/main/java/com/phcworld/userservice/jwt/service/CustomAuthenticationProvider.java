@@ -1,6 +1,5 @@
 package com.phcworld.userservice.jwt.service;
 
-import com.phcworld.userservice.exception.model.BadRequestException;
 import com.phcworld.userservice.exception.model.DeletedEntityException;
 import com.phcworld.userservice.exception.model.NotFoundException;
 import com.phcworld.userservice.exception.model.UnauthorizedException;
