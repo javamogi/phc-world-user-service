@@ -72,12 +72,12 @@ public class UserProducerImpl implements UserProducer {
             throw new InternalServerErrorException();
         }
 
-        ProducerRecord<String, String> record = new ProducerRecord<>(topic, user.getEmail(), jsonInString);
+//        ProducerRecord<String, String> record = new ProducerRecord<>(topic, user.getEmail(), jsonInString);
 
-        kafkaTemplate.send(record);
-//        kafkaTemplate.send(topic, jsonInString);
-//        log.info("User Producer sent data from the User microservice: {}", kafkaUserDto);
-        log.info("User Producer sent data from the User microservice: {}", record);
+//        kafkaTemplate.send(record);
+//        log.info("User Producer sent data from the User microservice: {}", record);
+        kafkaTemplate.send(topic, jsonInString);
+        log.info("User Producer sent data from the User microservice: {}", kafkaUserDto);
 
         return user;
     }

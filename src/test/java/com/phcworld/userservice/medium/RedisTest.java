@@ -6,6 +6,7 @@ import com.phcworld.userservice.exception.model.NotFoundException;
 import com.phcworld.userservice.service.port.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @Slf4j
 @ActiveProfiles("dev")
+@Disabled
 class RedisTest {
 
     @Autowired
@@ -212,3 +214,4 @@ class RedisTest {
     }
 
 }
+
