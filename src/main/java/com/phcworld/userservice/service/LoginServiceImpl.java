@@ -42,7 +42,6 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public TokenDto getNewToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return tokenProvider.generateTokenDto(authentication);

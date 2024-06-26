@@ -2,6 +2,7 @@ package com.phcworld.userservice.medium;
 
 import com.phcworld.userservice.domain.Authority;
 import com.phcworld.userservice.domain.User;
+import com.phcworld.userservice.exception.model.NotFoundException;
 import com.phcworld.userservice.infrastructure.UserRedisEntity;
 import com.phcworld.userservice.infrastructure.UserRedisRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -117,6 +118,18 @@ class RedisTest {
     }
 
     @Test
+    @DisplayName("등록되지 않는 회원 ID는 비어있는 Optional을 반환한다.")
+    void findByEmptyUserId() {
+        StopWatch queryStopWatch = new StopWatch();
+        queryStopWatch.start();
+        Optional<UserRedisEntity> findUser = userRedisRepository.findByUserId("9999");
+        queryStopWatch.stop();
+        log.info("findByUserId 조회 시간 : {}", queryStopWatch.getTotalTimeSeconds());
+
+        assertThat(findUser).isEmpty();
+    }
+
+    @Test
     @DisplayName("회원 이름으로 회원 목록을 조회할 수 있다.")
     void findByName() {
         StopWatch queryStopWatch = new StopWatch();
@@ -133,6 +146,18 @@ class RedisTest {
                 .isEqualTo(createDate.withNano(0)
                         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")));
         assertThat(findUser.get(0).getProfileImage()).isEqualTo("blank-profile-picture.png");
+    }
+
+    @Test
+    @DisplayName("등록되지 않은 회원 이름으로 회원 목록을 조회하면 비어있는 List를 반환한다.")
+    void findByNameWhenNotFound() {
+        StopWatch queryStopWatch = new StopWatch();
+        queryStopWatch.start();
+        List<UserRedisEntity> findUser = userRedisRepository.findByName("등록되지않는이름");
+        queryStopWatch.stop();
+        log.info("findByUserId 조회 시간 : {}", queryStopWatch.getTotalTimeSeconds());
+
+        assertThat(findUser).isEmpty();
     }
 
     @Test
@@ -155,6 +180,13 @@ class RedisTest {
     }
 
     @Test
+    @DisplayName("등록되지 않은 회원 이메일로 정보를 조회할 수 없다.")
+    void findByEmailWhenNotFound() {
+        assertThatThrownBy(() -> userRedisRepository.findByEmail("empty@test.test"))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
     @DisplayName("회원 ID List로 정보 목록을 조회할 수 있다.")
     void findByUserIds() {
         List<String> list = List.of("1111","2222");
@@ -165,6 +197,19 @@ class RedisTest {
         log.info("findByUserId 조회 시간 : {}", queryStopWatch.getTotalTimeSeconds());
 
         assertThat(findUser).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("등록되지 않은 회원 ID List로 정보 목록을 조회하면 비어있는 List를 반환한다.")
+    void findByUserIdsWhenNotFound() {
+        List<String> list = List.of("0000","9999");
+        StopWatch queryStopWatch = new StopWatch();
+        queryStopWatch.start();
+        List<UserRedisEntity> findUser = userRedisRepository.findByUserIds(list);
+        queryStopWatch.stop();
+        log.info("findByUserId 조회 시간 : {}", queryStopWatch.getTotalTimeSeconds());
+
+        assertThat(findUser).isEmpty();
     }
 
 }

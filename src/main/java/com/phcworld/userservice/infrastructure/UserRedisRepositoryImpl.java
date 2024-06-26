@@ -60,7 +60,9 @@ public class UserRedisRepositoryImpl {
         List<UserRedisEntity> list = new ArrayList<>();
         for (String userId : userIds){
             UserRedisEntity userRedisEntity = (UserRedisEntity) hops.get(HASH_KEY, userId);
-            list.add(userRedisEntity);
+            if(Objects.nonNull(userRedisEntity)){
+                list.add(userRedisEntity);
+            }
         }
         return list;
     }
