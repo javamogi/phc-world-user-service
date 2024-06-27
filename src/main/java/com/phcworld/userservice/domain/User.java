@@ -25,6 +25,20 @@ public class User {
     private String profileImage;
     private boolean isDeleted;
 
+    public static User from(User user, UuidHolder uuidHolder) {
+        return User.builder()
+                .email(user.getEmail())
+                .name(user.getName())
+                .password(user.getPassword())
+                .authority(user.getAuthority())
+                .createDate(user.getCreateDate())
+                .updateDate(user.getUpdateDate())
+                .profileImage(user.getProfileImage())
+                .userId(uuidHolder.random())
+                .isDeleted(user.isDeleted)
+                .build();
+    }
+
     public String getProfileImageUrl(){
         return "http://localhost:8080/image/" + profileImage;
     }
