@@ -3,6 +3,7 @@ package com.phcworld.userservice.messagequeue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.phcworld.userservice.domain.User;
+import com.phcworld.userservice.exception.model.ErrorCode;
 import com.phcworld.userservice.exception.model.InternalServerErrorException;
 import com.phcworld.userservice.messagequeue.dto.*;
 import com.phcworld.userservice.service.port.UserProducer;
@@ -69,7 +70,7 @@ public class UserProducerImpl implements UserProducer {
         try {
             jsonInString = mapper.writeValueAsString(kafkaUserDto);
         } catch (JsonProcessingException e){
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(e, ErrorCode.INTERNAL_SERVER_ERROR);
         }
 
 //        ProducerRecord<String, String> record = new ProducerRecord<>(topic, user.getEmail(), jsonInString);

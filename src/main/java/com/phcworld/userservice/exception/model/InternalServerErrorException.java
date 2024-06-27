@@ -4,9 +4,11 @@ public class InternalServerErrorException extends CustomBaseException{
     public InternalServerErrorException(ErrorCode errorCode) {
         super(errorCode.getMessage(), errorCode);
     }
-
     public InternalServerErrorException(){
         super(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 
+    public InternalServerErrorException(Throwable cause, ErrorCode errorCode) {
+        super(cause, errorCode);
+    }
 }

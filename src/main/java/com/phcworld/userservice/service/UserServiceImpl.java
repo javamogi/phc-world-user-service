@@ -3,6 +3,7 @@ package com.phcworld.userservice.service;
 import com.phcworld.userservice.controller.port.UserService;
 import com.phcworld.userservice.domain.User;
 import com.phcworld.userservice.domain.UserRequest;
+import com.phcworld.userservice.exception.model.DeletedEntityException;
 import com.phcworld.userservice.exception.model.DuplicationException;
 import com.phcworld.userservice.exception.model.ForbiddenException;
 import com.phcworld.userservice.exception.model.NotFoundException;
@@ -14,6 +15,8 @@ import com.phcworld.userservice.service.port.UuidHolder;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.network.DelayedResponseAuthenticationException;
+import org.hibernate.sql.Delete;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -62,15 +65,19 @@ public class UserServiceImpl implements UserService {
 				localDateTimeHolder,
 				uuidHolder);
 //		return userRepository.save(user);
-		userRepository.save(user);
+		user = userRepository.save(user);
 		return userProducer.send("users", user);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public User getUserByUserId(String userId){
-		return userRepository.findByUserId(userId)
+		User user = userRepository.findByUserId(userId)
 				.orElseThrow(NotFoundException::new);
+		if(user.isDeleted()){
+			throw new DeletedEntityException();
+		}
+		return user;
 	}
 
 	@Override
@@ -82,6 +89,9 @@ public class UserServiceImpl implements UserService {
 		}
 		User user = userRepository.findByUserId(requestDto.userId())
 				.orElseThrow(NotFoundException::new);
+		if(user.isDeleted()){
+			throw new DeletedEntityException();
+		}
 		String profileImg = user.getProfileImage();
 		if(requestDto.imageName() != null){
 //			profileImg = uploadFileService.registerFile(
@@ -103,6 +113,9 @@ public class UserServiceImpl implements UserService {
 		}
 		User user = userRepository.findByUserId(userId)
 				.orElseThrow(NotFoundException::new);
+		if(user.isDeleted()){
+			throw new DeletedEntityException();
+		}
 		user = user.delete();
 		userRepository.save(user);
 		return userProducer.send("users", user);

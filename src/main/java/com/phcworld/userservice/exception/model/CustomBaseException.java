@@ -16,4 +16,8 @@ public class CustomBaseException extends RuntimeException{
         this.errorCode = errorCode;
     }
 
+    public CustomBaseException(Throwable cause, ErrorCode errorCode) {
+        super(cause);
+        this.errorCode = errorCode;
+    }
 }
