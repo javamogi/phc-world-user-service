@@ -51,7 +51,6 @@ public class UserRedisRepositoryImpl implements UserRepository {
                 .map(userId -> {
                     UserRedisEntity user = (UserRedisEntity) redisTemplate.opsForHash().get(HASH_KEY, (String) userId);
                     return user.toModel();
-
                 })
                 .toList();
     }

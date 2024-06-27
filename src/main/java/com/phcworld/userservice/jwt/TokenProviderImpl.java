@@ -30,7 +30,7 @@ public class TokenProviderImpl implements TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer ";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
-//    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 5;  // 10초
+//    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 5;  // 5초
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 3;  // 3일
 //    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 10;  // 10초
 
@@ -48,20 +48,16 @@ public class TokenProviderImpl implements TokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            // 잘못된 JWT 서명
             log.debug("잘못된 JWT 서명입니다.");
             throw new BadRequestException(ErrorCode.TOKEN_BAD_REQUEST);
         } catch (ExpiredJwtException e) {
-            // 만료된 JWT 토큰
             log.debug("만료된 JWT 토큰입니다.");
-            throw new UnauthorizedException();
+            throw new BadRequestException(ErrorCode.TOKEN_EXPIRED);
         } catch (UnsupportedJwtException e) {
-            // 지원되지 않는 JWT 토큰
             log.debug("지원되지 않는 JWT 토큰입니다.");
             throw new BadRequestException(ErrorCode.TOKEN_BAD_REQUEST);
         } catch (IllegalArgumentException e) {
-            // 잘못된 토큰
-            log.debug("JWT 잘못된 토큰입니다.");
+            log.debug("잘못된 토큰입니다.");
             throw new BadRequestException(ErrorCode.TOKEN_BAD_REQUEST);
         }
     }

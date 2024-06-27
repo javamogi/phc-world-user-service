@@ -30,13 +30,13 @@ public class CommonsExceptionHandler {
 
     @ExceptionHandler(CustomBaseException.class)
     public ResponseEntity<ErrorResponse> handle(CustomBaseException e){
-        log.error("Exception");
+        log.error("Exception", e);
         return createErrorResponseEntity(e.getErrorCode());
     }
 
     @ExceptionHandler(BindException.class)
     public ResponseEntity handle(BindException e){
-        log.error("Exception");
+        log.error("Exception", e);
         Map<String, Object> map = new HashMap<>();
         List<FieldError> errors = e.getFieldErrors();
         List<String> errorMessages = new ArrayList<>();
