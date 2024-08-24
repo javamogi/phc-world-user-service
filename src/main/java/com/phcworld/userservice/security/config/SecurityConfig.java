@@ -5,6 +5,8 @@ import com.phcworld.userservice.jwt.entry.JwtAuthenticationEntryPoint;
 import com.phcworld.userservice.jwt.filter.JwtExceptionFilter;
 import com.phcworld.userservice.jwt.handler.JwtAccessDeniedHandler;
 import com.phcworld.userservice.jwt.service.CustomAuthenticationProvider;
+import com.phcworld.userservice.security.oauth2.CustomOAuth2UserService;
+import com.phcworld.userservice.security.oauth2.OAuth2SuccessHandler;
 import com.phcworld.userservice.service.port.TokenProvider;
 import jakarta.ws.rs.HttpMethod;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,8 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtExceptionFilter jwtExceptionFilter;
     private final Environment env;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -90,7 +94,9 @@ public class SecurityConfig {
                         exceptionConfig
                                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                                 .accessDeniedHandler(jwtAccessDeniedHandler))
-
+                .oauth2Login(oauth ->
+                        oauth.userInfoEndpoint(c -> c.userService(customOAuth2UserService))
+                                .successHandler(oAuth2SuccessHandler))
                 // 시큐리티는 기본적으로 세션을 사용
                 // 여기서는 세션을 사용하지 않기 때문에 세션 설정을 Stateless 로 설정
                 .sessionManagement(sessionManagementConfig -> sessionManagementConfig.
